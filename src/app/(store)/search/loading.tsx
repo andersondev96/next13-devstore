@@ -2,8 +2,9 @@
 
 import { Skeleton } from '@/components/skeleton'
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function SearchLoading() {
+function Loading() {
   const searchParams = useSearchParams()
 
   const query = searchParams.get('q')
@@ -22,5 +23,13 @@ export default function SearchLoading() {
         <Skeleton className="h-[400px]" />
       </div>
     </div>
+  )
+}
+
+export default function SearchLoading() {
+  return (
+    <Suspense>
+      <Loading />
+    </Suspense>
   )
 }
