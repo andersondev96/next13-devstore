@@ -1,9 +1,16 @@
 # DevStore
+
+![GitHub language count](https://img.shields.io/github/languages/count/andersondev96/next13-devstore?style=for-the-badge&color=8B5CF6)
+![GitHub repo size](https://img.shields.io/github/repo-size/andersondev96/next13-devstore?style=for-the-badge&color=8B5CF6)
+![GitHub last commit](https://img.shields.io/github/last-commit/andersondev96/next13-devstore?style=for-the-badge&color=8B5CF6)
+
 ![Home Screen](./home-screen.png)
 
 Projeto de e-commerce utilizando o Next.js com o Server Components. O projeto tem funcionalidades como listagem de produtos, carrinho de compras e busca.
 
-## Sobre o projeto
+[Sobre a a aplicação](#-sobre-a-aplicação) | [Tecnologias utilizadas](#-tecnologias-utilizadas) | [Layout](#-layout-da-aplicação) | [Como executar a aplicação](#-como-executar-a-aplicação) | [Como contribuir](#-como-contribuir) | [Licença](#-licença) | [Autor](#-autor)
+
+## 📄 Sobre a aplicação
 O projeto simula um carrinho de compras e possui as seguintes funcionalidades:
 
 - [x] Listagem de produtos
@@ -11,7 +18,7 @@ O projeto simula um carrinho de compras e possui as seguintes funcionalidades:
 - [x] Adicionar produtos ao carrinho
 - [x] Buscar por produtos
 
-## Tecnologias utilizadas
+## 🧑‍💻 Tecnologias utilizadas
 
 [![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://react.dev/)
 [![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)](https://reactrouter.com/)
@@ -19,7 +26,7 @@ O projeto simula um carrinho de compras e possui as seguintes funcionalidades:
 [![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-## 🎨 Layout
+## 🎨 Layout da aplicação
 
 Você pode acessar o layout da aplicação pelo seguinte link:
 
