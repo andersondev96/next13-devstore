@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { useCart } from '@/context/cart-context'
 
 interface AddToCartButtonProps {
@@ -14,12 +15,8 @@ export function AddToCartButton({ productId }: AddToCartButtonProps) {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleAddProductToCart}
-      className="mt-8 flex h-12 items-center justify-center rounded-full bg-emerald-600 font-semibold text-white"
-    >
+    <Button type="button" onClick={handleAddProductToCart} className="mt-8 w-full">
       Adicionar ao carrinho
-    </button>
+    </Button>
   )
 }

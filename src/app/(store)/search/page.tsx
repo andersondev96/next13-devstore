@@ -1,3 +1,5 @@
+import { Card } from '@/components/ui/card'
+import { SectionTitle } from '@/components/ui/section-title'
 import { api } from '@/data/api'
 import { Product } from '@/data/types/product'
 import Image from 'next/image'
@@ -13,7 +15,7 @@ interface SearchProps {
 async function searchProducts(query: string): Promise<Product[]> {
   const response = await api(`/products/search?q=${query}`, {
     next: {
-      revalidate: 60 * 60, // 1 hour
+      revalidate: 60 * 60,
     },
   })
 
@@ -32,40 +34,46 @@ export default async function Search({ searchParams }: SearchProps) {
   const products = await searchProducts(query)
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-sm">
-        Resultados para: <span className="font-semibold">{query}</span>
-      </p>
+    <div className="space-y-6">
+      <SectionTitle
+        eyebrow="Busca"
+        title={`Resultados para “${query}”`}
+        description="Os produtos abaixo foram selecionados com base na sua busca."
+      />
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {products.map((product) => {
           return (
-            <Link
-              key={product.id}
-              href={`/product/${product.slug}`}
-              className="group relative rounded-lg bg-zinc-900 overflow-hidden flex justify-center items-end"
-            >
-              <Image
-                src={product.image}
-                className="group-hover:scale-105 transition-transform duration-500"
-                width={480}
-                height={480}
-                quality={100}
-                alt=""
-              />
+            <Card key={product.id} className="overflow-hidden p-3">
+              <Link
+                href={`/product/${product.slug}`}
+                className="group relative flex min-h-[320px] items-end overflow-hidden rounded-[24px]"
+              >
+                <Image
+                  src={product.image}
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  fill
+                  quality={100}
+                  alt={product.title}
+                />
 
-              <div className="absolute bottom-10 right-10 h-12 flex items-center gap-2 max-w-[280px] rounded-full border-2 border-zinc-500 bg-black/60 p-1 pl-5">
-                <span className="text-sm truncate">{product.title}</span>
-                <span className="flex h-full items-center justify-center rounded-full bg-violet-500 px-4 font-semibold">
-                  {product.price.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })}
-                </span>
-              </div>
-            </Link>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/10 to-transparent" />
+
+                <div className="relative z-10 flex w-full items-center justify-between gap-3 p-4">
+                  <p className="max-w-[170px] text-sm font-medium text-white">
+                    {product.title}
+                  </p>
+                  <span className="rounded-full bg-brand-500/90 px-3 py-2 text-xs font-semibold text-slate-950">
+                    {product.price.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    })}
+                  </span>
+                </div>
+              </Link>
+            </Card>
           )
         })}
       </div>

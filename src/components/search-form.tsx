@@ -28,15 +28,15 @@ export function SearchForm() {
   return (
     <form
       onSubmit={handleSearch}
-      className="flex w-[320px] items-center gap-3 rounded-full bg-zinc-900 px-5 py-3 ring-zinc-700"
+      className="flex items-center gap-3 rounded-full border border-white/10 bg-slate-950/80 px-4 py-3 shadow-inner shadow-slate-950/40"
     >
-      <Search className="w-5 h-5 text-zinc-500" />
+      <Search className="h-4 w-4 text-slate-400" />
 
       <input
         name="q"
         defaultValue={query ?? ''}
         placeholder="Buscar produtos..."
-        className="flex-1 bg-transparent text-sm outline-none placeholder:text-zinc-500"
+        className="flex-1 bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500"
         required
       />
     </form>

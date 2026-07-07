@@ -28,6 +28,10 @@ O projeto simula um carrinho de compras e possui as seguintes funcionalidades:
 
 ## 🎨 Layout da aplicação
 
+O projeto passou por uma evolução visual completa com um novo Design System próprio, com tokens de cor, componentes reutilizáveis, cards premium e uma identidade mais moderna para o e-commerce.
+
+Documentação completa disponível em [docs/design-system.md](docs/design-system.md).
+
 Você pode acessar o layout da aplicação pelo seguinte link:
 
 - [Layout](https://www.figma.com/design/IxFEeERjLiZe1b8fv4OxaQ/devstore-%E2%80%A2-Projeto-React-(Community)?node-id=0-1&t=B32koNDjeEYflsx5-1)
