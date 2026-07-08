@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react'
-import { cn } from '@/lib/cn'
+import { cn } from '@/shared/lib/cn'
 
 interface SectionTitleProps extends ComponentProps<'div'> {
     eyebrow?: string

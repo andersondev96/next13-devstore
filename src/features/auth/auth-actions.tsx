@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { signIn, signOut } from 'next-auth/react'
 import { LogIn, LogOut, UserRound } from 'lucide-react'
-import { cn } from '@/lib/cn'
+import { cn } from '@/shared/lib/cn'
 
 interface AuthActionsProps {
   user?: {

@@ -2,9 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { getServerSession } from 'next-auth/next'
-import { AuthActions } from './auth-actions'
-import { CartWidget } from './cart-widget'
-import { SearchForm } from './search-form'
+import { AuthActions } from '@/features/auth/auth-actions'
+import { CartWidget } from '@/features/cart/cart-widget'
+import { SearchForm } from '@/features/products/search-form'
 import { authOptions } from '@/lib/auth'
 
 export async function Header() {

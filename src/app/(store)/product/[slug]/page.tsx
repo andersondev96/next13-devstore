@@ -1,5 +1,5 @@
 import { AddToCartButton } from '@/components/add-to-cart-button'
-import { Card } from '@/components/ui/card'
+import { Card } from '@/shared/ui/components/card'
 import { api } from '@/data/api'
 import { Product } from '@/data/types/product'
 import { Metadata } from 'next'

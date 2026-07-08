@@ -1,5 +1,5 @@
-import { Card } from '@/components/ui/card'
-import { SectionTitle } from '@/components/ui/section-title'
+import { Card } from '@/shared/ui/components/card'
+import { SectionTitle } from '@/shared/ui/components/section-title'
 import { api } from '@/data/api'
 import { Product } from '@/data/types/product'
 import { Metadata } from 'next'
