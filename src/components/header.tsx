@@ -10,11 +10,17 @@ export function Header() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-cyan-300 text-lg font-black text-slate-950">
-              D
+            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-slate-950/80 shadow-[0_10px_30px_rgba(56,189,248,0.15)]">
+              <Image
+                src="/lumen-mark.svg"
+                alt="Lumen"
+                width={44}
+                height={44}
+                priority
+              />
             </div>
             <div>
-              <p className="text-lg font-semibold tracking-tight text-white">devstore</p>
+              <p className="text-lg font-semibold tracking-tight text-white">Lumen</p>
               <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
                 collection 2026
               </p>

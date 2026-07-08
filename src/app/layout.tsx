@@ -6,10 +6,15 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | devstore',
-    default: 'devstore',
+    template: '%s | Lumen',
+    default: 'Lumen',
   },
-  description: 'Um e-commerce moderno com um Design System novo, premium e consistente.',
+  description: 'Uma loja virtual moderna, premium e elegante com identidade Lumen.',
+  icons: {
+    icon: '/lumen-mark.svg',
+    shortcut: '/lumen-mark.svg',
+    apple: '/lumen-mark.svg',
+  },
 }
 
 export default function RootLayout({
