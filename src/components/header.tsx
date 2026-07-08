@@ -10,12 +10,12 @@ export function Header() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-slate-950/80 shadow-[0_10px_30px_rgba(56,189,248,0.15)]">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-[18px] border border-cyan-400/20 bg-slate-950/90 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_18px_45px_rgba(56,189,248,0.18)]">
               <Image
                 src="/lumen-mark.svg"
                 alt="Lumen"
-                width={44}
-                height={44}
+                width={48}
+                height={48}
                 priority
               />
             </div>
