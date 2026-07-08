@@ -1,4 +1,4 @@
-# DevStore
+# Lumen
 
 ![GitHub language count](https://img.shields.io/github/languages/count/andersondev96/next13-devstore?style=for-the-badge&color=8B5CF6)
 ![GitHub repo size](https://img.shields.io/github/repo-size/andersondev96/next13-devstore?style=for-the-badge&color=8B5CF6)
@@ -11,6 +11,7 @@ Projeto de e-commerce utilizando o Next.js com o Server Components. O projeto te
 [Sobre a a aplicação](#-sobre-a-aplicação) | [Tecnologias utilizadas](#-tecnologias-utilizadas) | [Layout](#-layout-da-aplicação) | [Como executar a aplicação](#-como-executar-a-aplicação) | [Como contribuir](#-como-contribuir) | [Licença](#-licença) | [Autor](#-autor)
 
 ## 📄 Sobre a aplicação
+
 O projeto simula um carrinho de compras e possui as seguintes funcionalidades:
 
 - [x] Listagem de produtos
@@ -34,7 +35,7 @@ Documentação completa disponível em [docs/design-system.md](docs/design-syste
 
 Você pode acessar o layout da aplicação pelo seguinte link:
 
-- [Layout](https://www.figma.com/design/IxFEeERjLiZe1b8fv4OxaQ/devstore-%E2%80%A2-Projeto-React-(Community)?node-id=0-1&t=B32koNDjeEYflsx5-1)
+- [Layout](<https://www.figma.com/design/IxFEeERjLiZe1b8fv4OxaQ/lumen-%E2%80%A2-Projeto-React-(Community)?node-id=0-1&t=B32koNDjeEYflsx5-1>)
 
 Lembrando que é necessário possuir uma conta no [Figma](https://www.figma.com/).
 
@@ -59,22 +60,31 @@ git clone https://github.com/rocketseat-education/ignite-devstore-api
 **No servidor:**
 
 - Acesse a aplicação:
+
 ```
 cd ignite-devstore-api
 ```
+
 - Instale as dependências:
+
 ```
 npm install
 ```
+
 ou
+
 ```
 pnpm install
 ```
-- Rode o servidor na porta ``3000``:
+
+- Rode o servidor na porta `3000`:
+
 ```
 npm run dev
 ```
+
 ou
+
 ```
 pnpm run dev
 ```
@@ -88,14 +98,19 @@ cd next13-devstore
 ```
 
 - Instale as dependências
+
 ```
 npm install
 ```
+
 ou
+
 ```
 pnpm install
 ```
+
 - Clone o .env.example e renomeie para .env
+
 ```
 cp .env.example .env
 ```
@@ -103,17 +118,20 @@ cp .env.example .env
 > Como o servidor já está rodando na porta 3000, a aplicação deverá rodar na porta 3001.
 
 - Para executar a aplicação, execute os comandos:
+
 ```
 npm run dev
 ```
+
 ou
+
 ```
 pnpm run dev
 ```
 
 - Abra a aplicação no navegador de sua preferência.
 
- ## 🤝 Como contribuir?
+## 🤝 Como contribuir?
 
 - Faça um fork desse repositório.
 - Crie uma branch com a sua feature: `git checkout -b my-feature`.
@@ -137,8 +155,3 @@ Este projeto está sob a licença [MIT](LICENSE).
 [![linkedin](https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/anderson-fernandes96/)
 
 Feito com 💚 por Anderson Fernandes 👋 [Entre em contato!](https://www.linkedin.com/in/anderson-fernandes96/)
-
-
-
-
-
