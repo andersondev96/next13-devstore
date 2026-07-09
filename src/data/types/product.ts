@@ -1,1 +1,14 @@
-export type { Product } from "@/shared/types/types/product";
+export interface Product {
+  id: number;
+  title: string;
+  slug: string;
+  price: number;
+  image: string;
+  description: string;
+  featured: boolean;
+  rating?: {
+    rate: number;
+    count: number;
+  };
+  stock: number;
+}

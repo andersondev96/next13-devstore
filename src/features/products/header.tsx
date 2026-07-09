@@ -12,8 +12,8 @@ export async function Header() {
 
   return (
     <header className="sticky top-4 z-20 rounded-[28px] border border-white/10 bg-slate-900/70 px-4 py-4 shadow-card backdrop-blur-xl sm:px-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col items-center gap-4 lg:flex-row lg:justify-between">
+        <div className="flex w-full items-center justify-between lg:w-auto">
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-[18px] border border-cyan-400/20 bg-slate-950/90 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_18px_45px_rgba(56,189,248,0.18)]">
               <Image
@@ -40,18 +40,16 @@ export async function Header() {
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 lg:flex-row lg:items-center lg:justify-end lg:gap-4">
-          <div className="w-full lg:max-w-[420px]">
-            <Suspense fallback={null}>
-              <SearchForm />
-            </Suspense>
-          </div>
+        <div className="w-full lg:flex-1 lg:max-w-[420px]">
+          <Suspense fallback={null}>
+            <SearchForm />
+          </Suspense>
+        </div>
 
-          <div className="hidden items-center gap-4 lg:flex">
-            <CartWidget />
-            <div className="h-8 w-px bg-white/10" />
-            <AuthActions user={session?.user} />
-          </div>
+        <div className="hidden items-center gap-4 lg:flex">
+          <CartWidget />
+          <div className="h-8 w-px bg-white/10" />
+          <AuthActions user={session?.user} />
         </div>
       </div>
     </header>
