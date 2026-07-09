@@ -29,9 +29,10 @@ async function getProduct(slug: string): Promise<Product> {
 export default async function OgImage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const product = await getProduct(params.slug)
+  const { slug } = await params
+  const product = await getProduct(slug)
 
   const productImageUrl = new URL(product.image, env.APP_URL).toString()
 

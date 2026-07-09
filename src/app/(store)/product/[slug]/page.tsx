@@ -1,16 +1,17 @@
 import { AddToCartButton } from '@/components/add-to-cart-button'
 import { Card } from '@/shared/ui/components/card'
 import { api } from '@/data/api'
-import { Product } from '@/data/types/product'
+import { Product } from '@/data/types/products'
 import { Metadata } from 'next'
 import Image from 'next/image'
+import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
 interface ProductProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 async function getProduct(slug: string): Promise<Product> {
@@ -20,6 +21,10 @@ async function getProduct(slug: string): Promise<Product> {
     },
   })
 
+  if (!response.ok) {
+    notFound()
+  }
+
   const product = await response.json()
 
   return product
@@ -28,7 +33,8 @@ async function getProduct(slug: string): Promise<Product> {
 export async function generateMetadata({
   params,
 }: ProductProps): Promise<Metadata> {
-  const product = await getProduct(params.slug)
+  const { slug } = await params
+  const product = await getProduct(slug)
 
   return {
     title: product.title,
@@ -36,7 +42,8 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage({ params }: ProductProps) {
-  const product = await getProduct(params.slug)
+  const { slug } = await params
+  const product = await getProduct(slug)
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
@@ -64,21 +71,25 @@ export default async function ProductPage({ params }: ProductProps) {
           <p className="mt-4 leading-7 text-slate-300">{product.description}</p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <span className="rounded-full bg-brand-500/90 px-5 py-2.5 text-lg font-semibold text-slate-950">
-              {product.price.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })}
-            </span>
-            <span className="text-sm text-slate-400">
-              Em até 12x s/juros de{' '}
-              {(product.price / 12).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              })}
-            </span>
+            {typeof product.price === 'number' && (
+              <>
+                <span className="rounded-full bg-brand-500/90 px-5 py-2.5 text-lg font-semibold text-slate-950">
+                  {product.price.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })}
+                </span>
+                <span className="text-sm text-slate-400">
+                  Em até 12x s/juros de{' '}
+                  {(product.price / 12).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
+                </span>
+              </>
+            )}
           </div>
 
           <div className="mt-8 space-y-4">
