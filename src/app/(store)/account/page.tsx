@@ -37,6 +37,7 @@ export default async function AccountPage() {
           />
           <div className="mt-8">
             <AuthActions />
+            <AuthActions user={session?.user} />
           </div>
         </Card>
 

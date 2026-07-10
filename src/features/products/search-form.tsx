@@ -28,15 +28,24 @@ export function SearchForm() {
   return (
     <form
       onSubmit={handleSearch}
-      className="flex items-center gap-3 rounded-full border border-white/10 bg-slate-950/80 px-4 py-3 shadow-inner shadow-slate-950/40"
+      className="flex w-full items-center gap-3 rounded-full border border-white/10 px-5 py-4 shadow-inner shadow-slate-950/40 transition-shadow duration-150 focus-within:border-white/20 focus-within:shadow-none focus-within:ring-2 focus-within:ring-cyan-400/30 focus-within:shadow-[0_8px_30px_rgba(56,189,248,0.08)]"
     >
-      <Search className="h-4 w-4 text-slate-400" />
+      <Search className="h-5 w-5 shrink-0 text-slate-400" />
 
       <input
         name="q"
         defaultValue={query ?? ''}
         placeholder="Buscar produtos..."
-        className="flex-1 bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500"
+        className="appearance-none flex-1 border-none shadow-none bg-transparent text-base placeholder:text-slate-400 text-current focus:ring-0 focus:outline-none"
+        style={{
+          backgroundColor: 'transparent',
+          WebkitBoxShadow: '0 0 0 1000px transparent inset, 0 0 0 0 transparent',
+          boxShadow: '0 0 0 1000px transparent inset, 0 0 0 0 transparent',
+          outline: 'none',
+          border: 'none',
+          WebkitAppearance: 'none'
+        }}
+        autoComplete="off"
         required
       />
     </form>
