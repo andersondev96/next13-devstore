@@ -28,20 +28,17 @@ export default async function AccountPage() {
 
   if (!session?.user) {
     return (
-      <div className="grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-start">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
         <Card className="p-6 sm:p-8">
           <SectionTitle
             eyebrow="Acesso"
             title="Entre para acessar sua conta"
             description="Use Google ou GitHub para ver seus dados de perfil e acompanhar o histórico de pedidos da Lumen."
           />
-          <div className="mt-8">
-            <AuthActions />
-            <AuthActions user={session?.user} />
-          </div>
+          <AuthActions className="mt-8" />
         </Card>
 
-        <Card className="p-6">
+        <Card className="p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-300">
             Minha Conta
           </p>
@@ -57,7 +54,7 @@ export default async function AccountPage() {
   const orders = await getOrdersByUserId(session.user.id)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Card className="p-6 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-4">
@@ -108,54 +105,79 @@ export default async function AccountPage() {
         {orders.length > 0 ? (
           <div className="grid gap-4">
             {orders.map((order) => (
-              <Card key={order.id} className="p-5">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-lg font-semibold text-white">
-                        Pedido {order.id}
-                      </h2>
-                      <span className="rounded-full border border-brand-400/30 bg-brand-500/10 px-3 py-1 text-xs font-semibold text-brand-200">
-                        {order.status}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm text-slate-400">
-                      {dateFormatter.format(new Date(order.date))}
+              <Card key={order.id} className="p-6 sm:p-8">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="space-y-1.5">
+                    <h2 className="text-lg font-semibold text-white">
+                      Pedido #{order.id}
+                    </h2>
+                    <p className="text-sm text-slate-400">
+                      Realizado em {dateFormatter.format(new Date(order.date))}
                     </p>
                   </div>
-
-                  <p className="text-xl font-semibold text-white">
-                    {currencyFormatter.format(order.total)}
-                  </p>
+                  <div className="space-y-1.5 text-left sm:text-right">
+                    <span className="rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-400">
+                      {order.status}
+                    </span>
+                    <p className="text-sm text-slate-300">
+                      Total: {currencyFormatter.format(order.total)}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="mt-5 divide-y divide-white/10 rounded-2xl border border-white/10 bg-slate-950/40">
+                <ul className="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10 bg-slate-950/40">
                   {order.items.map((item) => (
-                    <div
-                      key={`${order.id}-${item.name}`}
-                      className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                    <li
+                      key={`${order.id}-${item.product.name}`}
+                      className="flex items-center justify-between gap-4 px-5 py-4"
                     >
-                      <div>
-                        <p className="text-sm font-medium text-slate-100">
-                          {item.name}
-                        </p>
-                        <p className="text-xs text-slate-400">
-                          Quantidade: {item.quantity}
-                        </p>
+                      <div className="flex items-start gap-4">
+                        {item.product.image ? (
+                          <Image
+                            src={item.product.image}
+                            width={64}
+                            height={64}
+                            className="h-16 w-16 rounded-lg object-cover"
+                            alt={item.product.name}
+                          />
+                        ) : (
+                          <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-slate-800">
+                            <svg
+                              className="h-5 w-5 text-slate-600"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                            </svg>
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium text-slate-100">
+                            {item.product.name}
+                          </p>
+                          <p className="mt-1 text-sm text-slate-400">
+                            Quantidade: {item.quantity}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm font-semibold text-brand-200">
+                      <p className="text-right font-semibold text-white">
                         {currencyFormatter.format(item.price)}
                       </p>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </Card>
             ))}
           </div>
         ) : (
           <Card className="p-6">
             <p className="text-sm text-slate-300">
-              Voce ainda nao possui pedidos vinculados a esta conta.
+              Você ainda não possui pedidos vinculados a esta conta.
             </p>
           </Card>
         )}

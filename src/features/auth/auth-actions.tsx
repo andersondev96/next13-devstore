@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { signIn, signOut } from 'next-auth/react'
 import { LogOut, UserRound } from 'lucide-react'
+import { cn } from '@/shared/lib/cn'
 
 interface AuthActionsProps {
   user?: {
@@ -11,6 +12,7 @@ interface AuthActionsProps {
     email?: string | null
     image?: string | null
   }
+  className?: string
 }
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -32,12 +34,12 @@ function GithubIcon({ className }: { className?: string }) {
   )
 }
 
-export function AuthActions({ user }: AuthActionsProps) {
+export function AuthActions({ user, className }: AuthActionsProps) {
   if (user) {
     const label = user.name?.split(' ')[0] ?? 'Conta'
 
     return (
-      <div className="flex items-center gap-3">
+      <div className={cn('flex items-center gap-3', className)}>
         <Link
           href="/account"
           className="flex items-center gap-2 hover:text-white"
@@ -75,7 +77,7 @@ export function AuthActions({ user }: AuthActionsProps) {
   }
 
   return (
-    <div className="flex flex-col items-start gap-1">
+    <div className={cn('flex flex-col items-start gap-1', className)}>
       <span className="text-xs text-slate-400">Entre ou cadastre com:</span>
       <div className="flex items-center gap-2">
         <button

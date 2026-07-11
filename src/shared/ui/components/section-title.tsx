@@ -5,6 +5,7 @@ interface SectionTitleProps extends ComponentProps<'div'> {
     eyebrow?: string
     title: string
     description?: string
+    as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 }
 
 export function SectionTitle({
@@ -12,6 +13,7 @@ export function SectionTitle({
     title,
     description,
     className,
+    as: TitleComponent = 'h2',
     ...props
 }: SectionTitleProps) {
     return (
@@ -21,7 +23,9 @@ export function SectionTitle({
                     {eyebrow}
                 </p>
             ) : null}
-            <h2 className="text-2xl font-semibold text-white sm:text-3xl">{title}</h2>
+            <TitleComponent className="text-2xl font-semibold text-white sm:text-3xl">
+                {title}
+            </TitleComponent>
             {description ? (
                 <p className="max-w-2xl text-sm leading-7 text-slate-300">{description}</p>
             ) : null}
