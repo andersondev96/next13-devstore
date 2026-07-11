@@ -1,13 +1,14 @@
 'use client'
 
-import { Button } from '@/shared/ui/components/button'
 import { useCart } from '@/context/cart-context'
+import { Button } from '@/shared/ui/components/button'
+import { ComponentProps } from 'react'
 
-interface AddToCartButtonProps {
+interface AddToCartButtonProps extends ComponentProps<'button'> {
   productId: number
 }
 
-export function AddToCartButton({ productId }: AddToCartButtonProps) {
+export function AddToCartButton({ productId, ...props }: AddToCartButtonProps) {
   const { addToCart } = useCart()
 
   function handleAddProductToCart() {
@@ -15,7 +16,7 @@ export function AddToCartButton({ productId }: AddToCartButtonProps) {
   }
 
   return (
-    <Button type="button" onClick={handleAddProductToCart} className="mt-8 w-full">
+    <Button type="button" onClick={handleAddProductToCart} {...props}>
       Adicionar ao carrinho
     </Button>
   )
