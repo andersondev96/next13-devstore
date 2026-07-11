@@ -37,65 +37,69 @@ export function AuthActions({ user }: AuthActionsProps) {
     const label = user.name?.split(' ')[0] ?? 'Conta'
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <Link
           href="/account"
-          className="flex flex-col items-center gap-1 rounded-full bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
+          className="flex items-center gap-2 hover:text-white"
+          title="Minha conta"
+          aria-label="Minha conta"
         >
           {user.image ? (
             <Image
               src={user.image}
-              className="h-10 w-10 rounded-full object-cover"
-              width={40}
-              height={40}
+              className="h-8 w-8 rounded-full object-cover"
+              width={32}
+              height={32}
               alt={user.name ?? 'Avatar da conta'}
             />
           ) : (
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-500/20 text-brand-200">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-500/20 text-brand-200">
               <UserRound className="h-5 w-5" />
             </span>
           )}
-          <span className="mt-1 w-full text-center text-sm leading-none text-slate-100">
-            {label}
-          </span>
+
+          <span className="hidden text-sm font-medium sm:block">{label}</span>
         </Link>
 
         <button
           type="button"
           onClick={() => signOut({ callbackUrl: '/' })}
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white"
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white"
           aria-label="Sair"
           title="Sair"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-5 w-5" />
         </button>
       </div>
     )
   }
 
   return (
-    <div className="flex h-10 flex-nowrap items-center gap-2">
-      <button
-        type="button"
-        onClick={() => signIn('google', { callbackUrl: '/account' })}
-        className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-full bg-white/5 px-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
-        aria-label="Entrar com Google"
-        title="Entrar com Google"
-      >
-        <GoogleIcon className="h-4 w-4 shrink-0" />
-        <span className="hidden leading-none sm:inline">Google</span>
-      </button>
+    <div className="flex flex-col items-start gap-1">
+      <span className="text-xs text-slate-400">Entre ou cadastre com:</span>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => signIn('google', { callbackUrl: '/account' })}
+          className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white/5 px-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
+          aria-label="Entrar com Google"
+          title="Entrar com Google"
+        >
+          <GoogleIcon className="h-5 w-5 shrink-0" />
+          <span className="leading-none">Google</span>
+        </button>
 
-      <button
-        type="button"
-        onClick={() => signIn('github', { callbackUrl: '/account' })}
-        className="inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-full bg-white/5 px-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
-        aria-label="Entrar com GitHub"
-        title="Entrar com GitHub"
-      >
-        <GithubIcon className="h-4 w-4 shrink-0" />
-        <span className="hidden leading-none sm:inline">GitHub</span>
-      </button>
+        <button
+          type="button"
+          onClick={() => signIn('github', { callbackUrl: '/account' })}
+          className="inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white/5 px-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10"
+          aria-label="Entrar com GitHub"
+          title="Entrar com GitHub"
+        >
+          <GithubIcon className="h-5 w-5 shrink-0" />
+          <span className="leading-none">GitHub</span>
+        </button>
+      </div>
     </div>
   )
 }
