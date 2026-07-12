@@ -1,47 +1,84 @@
 import { api } from '@/data/api'
 import { Product } from '@/data/types/product'
 import { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
 import { ProductFilters } from './product-filters'
 import { ProductSort } from './product-sort'
+import { ProductList } from './product-list'
+
+interface ResolvedSearchParams {
+  categoria?: string
+  preco_max?: string
+  preco_min?: string
+  rating_min?: string
+  marca?: string
+  disponibilidade?: string
+  sort?: string
+  page?: string
+}
 
 interface HomeProps {
-  searchParams: Promise<{
-    categoria?: string
-    preco_max?: string
-    preco_min?: string
-    rating_min?: string
-    marca?: string
-    disponibilidade?: string
-    sort?: string
-  }>
+  searchParams: Promise<ResolvedSearchParams>
+}
+
+interface ProductsResponse {
+  products: Product[]
+  page: number
+  totalPages: number
+  total: number
 }
 
 export const metadata: Metadata = {
   title: 'Home',
 }
 
-export default async function Home({ searchParams }: HomeProps) {
-  const resolvedSearchParams = await searchParams
-
+// Monta a query da API a partir dos filtros/ordenação da URL + a página desejada
+function buildProductsQuery(searchParams: ResolvedSearchParams, page: number) {
   const params = new URLSearchParams()
-  if (resolvedSearchParams.categoria) params.set('categoria', resolvedSearchParams.categoria)
-  if (resolvedSearchParams.preco_max) params.set('preco_max', resolvedSearchParams.preco_max)
-  if (resolvedSearchParams.preco_min) params.set('preco_min', resolvedSearchParams.preco_min)
-  if (resolvedSearchParams.rating_min) params.set('rating_min', resolvedSearchParams.rating_min)
-  if (resolvedSearchParams.marca) params.set('marca', resolvedSearchParams.marca)
-  if (resolvedSearchParams.disponibilidade)
-    params.set('disponibilidade', resolvedSearchParams.disponibilidade)
-  if (resolvedSearchParams.sort) params.set('sort', resolvedSearchParams.sort)
 
-  const response = await api(`/products?${params.toString()}`, {
-    next: {
-      revalidate: 60 * 60, // 1 hour
-    },
+  if (searchParams.categoria) params.set('categoria', searchParams.categoria)
+  if (searchParams.preco_max) params.set('preco_max', searchParams.preco_max)
+  if (searchParams.preco_min) params.set('preco_min', searchParams.preco_min)
+  if (searchParams.rating_min) params.set('rating_min', searchParams.rating_min)
+  if (searchParams.marca) params.set('marca', searchParams.marca)
+  if (searchParams.disponibilidade) params.set('disponibilidade', searchParams.disponibilidade)
+  if (searchParams.sort) params.set('sort', searchParams.sort)
+  params.set('page', String(page))
+
+  return params
+}
+
+async function fetchProductsPage(searchParams: ResolvedSearchParams, page: number) {
+  const query = buildProductsQuery(searchParams, page)
+  const response = await api(`/products?${query.toString()}`, {
+    next: { revalidate: 60 * 60 }, // 1 hour
   })
 
-  const products: Product[] = await response.json()
+  return response.json() as Promise<ProductsResponse>
+}
+
+export default async function Home({ searchParams }: HomeProps) {
+  const resolvedSearchParams = await searchParams
+  const requestedPage = Number(resolvedSearchParams.page) || 1
+
+  const firstPage = await fetchProductsPage(resolvedSearchParams, 1)
+
+  // Evita disparar N requisições à toa se alguém editar a URL para uma página inexistente
+  const currentPage = Math.min(Math.max(requestedPage, 1), firstPage.totalPages)
+
+  // Busca em paralelo as páginas intermediárias: um link compartilhado com "?page=3"
+  // precisa chegar com os produtos das páginas 1, 2 e 3 já carregados
+  const remainingPages = Array.from(
+    { length: currentPage - 1 },
+    (_, index) => index + 2, // [2, 3, ..., currentPage]
+  )
+  const remainingResponses = await Promise.all(
+    remainingPages.map((page) => fetchProductsPage(resolvedSearchParams, page)),
+  )
+
+  const products = [
+    ...firstPage.products,
+    ...remainingResponses.flatMap((response) => response.products),
+  ]
 
   const filterLabels: Record<string, string> = {
     categoria: 'Categoria',
@@ -53,10 +90,10 @@ export default async function Home({ searchParams }: HomeProps) {
   }
 
   const appliedFilters = Object.entries(resolvedSearchParams)
-    .filter(([key, value]) => value && key !== 'sort') // sort não é um "filtro" exibido em badge
+    .filter(([key, value]) => value && key in filterLabels)
     .map(([key, value]) => ({
       key,
-      label: filterLabels[key] ?? key,
+      label: filterLabels[key],
       value: value as string,
     }))
 
@@ -67,7 +104,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/15 px-3 py-1 text-sm font-semibold text-violet-300 ring-1 ring-inset ring-violet-500/30">
-            {products.length} produto{products.length === 1 ? '' : 's'}
+            {firstPage.total} produto{firstPage.total === 1 ? '' : 's'}
           </span>
 
           {appliedFilters.map((filter) => (
@@ -84,60 +121,12 @@ export default async function Home({ searchParams }: HomeProps) {
         <ProductSort />
       </div>
 
-      {products.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => {
-            return (
-              <Link
-                key={product.id}
-                href={`/product/${product.slug}`}
-                className="group relative block overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/70 text-white shadow-card"
-              >
-                {product.stock <= 0 && (
-                  <div className="absolute right-4 top-4 z-10 rounded-full bg-red-500/80 px-3 py-1 text-xs font-bold backdrop-blur-sm">
-                    ESGOTADO
-                  </div>
-                )}
-                <Image
-                  src={product.image}
-                  className="h-full w-full transform-gpu object-cover transition-transform duration-300 group-hover:scale-105"
-                  width={480}
-                  height={480}
-                  quality={100}
-                  alt={product.title}
-                />
-
-                <div className="absolute bottom-0 w-full space-y-2 bg-gradient-to-t from-black/70 to-transparent p-4 pt-8 sm:p-5 sm:pt-10">
-                  {product.rating && (
-                    <div className="flex items-center justify-end gap-1 text-xs text-zinc-300">
-                      <span>⭐</span>
-                      <span>{product.rating.rate}</span>
-                      <span className="text-zinc-500">({product.rating.count})</span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-end">
-                    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/60 p-1 pl-4 backdrop-blur-xl">
-                      <span className="truncate text-sm">{product.title}</span>
-                      <span className="flex items-center justify-center rounded-full bg-violet-500 px-4 py-2 font-semibold">
-                        {product.price.toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL',
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="flex h-96 items-center justify-center">
-          <p className="text-center text-zinc-400">
-            Nenhum produto encontrado para os filtros selecionados.
-          </p>
-        </div>
-      )}
+      <ProductList
+        key={buildProductsQuery(resolvedSearchParams, 1).toString()}
+        initialProducts={products}
+        initialPage={currentPage}
+        totalPages={firstPage.totalPages}
+      />
     </div>
   )
 }

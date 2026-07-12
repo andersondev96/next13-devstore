@@ -1,0 +1,52 @@
+import Link from "next/link";
+import Image from "next/image";
+import { Product } from "@/data/types/products";
+
+interface ProductCardProps {
+    product: Product;
+}
+
+export function ProductCard({ product }: ProductCardProps) {
+    return (
+        <Link
+            key={product.id}
+            href={`/product/${product.slug}`}
+            className="group relative block overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/70 text-white shadow-card"
+        >
+            {product.stock <= 0 && (
+                <div className="absolute right-4 top-4 z-10 rounded-full bg-red-500/80 px-3 py-1 text-xs font-bold backdrop-blur-sm">
+                    ESGOTADO
+                </div>
+            )}
+            <Image
+                src={product.image}
+                className="h-full w-full transform-gpu object-cover transition-transform duration-300 group-hover:scale-105"
+                width={480}
+                height={480}
+                quality={100}
+                alt={product.title}
+            />
+
+            <div className="absolute bottom-0 w-full space-y-2 bg-gradient-to-t from-black/70 to-transparent p-4 pt-8 sm:p-5 sm:pt-10">
+                {product.rating && (
+                    <div className="flex items-center justify-end gap-1 text-xs text-zinc-300">
+                        <span>⭐</span>
+                        <span>{product.rating.rate}</span>
+                        <span className="text-zinc-500">({product.rating.count})</span>
+                    </div>
+                )}
+                <div className="flex items-center justify-end">
+                    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/60 p-1 pl-4 backdrop-blur-xl">
+                        <span className="truncate text-sm">{product.title}</span>
+                        <span className="flex items-center justify-center rounded-full bg-violet-500 px-4 py-2 font-semibold">
+                            {product.price.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                            })}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </Link>
+    )
+}

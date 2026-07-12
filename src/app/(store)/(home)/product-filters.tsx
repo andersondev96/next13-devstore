@@ -38,6 +38,13 @@ export function ProductFilters() {
         if (disponibilidade) params.set('disponibilidade', disponibilidade)
         else params.delete('disponibilidade')
 
+        if (disponibilidade) params.set('disponibilidade', disponibilidade)
+        else params.delete('disponibilidade')
+
+        params.delete('page') // todo novo filtro reinicia a paginação
+
+        router.push(`/?${params.toString()}`)
+
         router.push(`/?${params.toString()}`)
     }
 
