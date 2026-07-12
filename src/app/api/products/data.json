@@ -69,6 +69,62 @@
         "rate": 4.7,
         "count": 75
       }
+    },
+    {
+      "id": 6,
+      "title": "Camiseta Build the Future",
+      "slug": "camiseta-build-the-future",
+      "price": 99.90,
+      "image": "/camiseta_lumen_build_the_future.png",
+      "description": "Uma camiseta que representa a missão de todo desenvolvedor: transformar ideias em soluções. Minimalista, elegante e perfeita para o dia a dia.",
+      "featured": false,
+      "stock": 20,
+      "rating": {
+        "rate": 4.6,
+        "count": 150
+      }
+    },
+    {
+      "id": 7,
+      "title": "Camiseta Git Commit",
+      "slug": "camiseta-lumen-git-commit",
+      "price": 109.90,
+      "image": "/camiseta_lumen_git_commit.png",
+      "description": "Inspirada no momento mais importante de um projeto: registrar progresso. Para quem acredita que cada commit aproxima o produto da excelência.",
+      "featured": false,
+      "stock": 15,
+      "rating": {
+        "rate": 4.9,
+        "count": 200
+      }
+    },
+    {
+      "id": 8,
+      "title": "Camiseta Night Mode",
+      "slug": "camiseta-night-mode",
+      "price": 119.90,
+      "image": "/camiseta_lumen_night_mode.png",
+      "description": "Camiseta totalmente preta.",
+      "featured": false,
+      "stock": 15,
+      "rating": {
+        "rate": 4.9,
+        "count": 200
+      }
+    },
+    {
+      "id": 9,
+      "title": "Moletom While Alive",
+      "slug": "while-alive",
+      "price": 119.90,
+      "image": "/moletom_lumen_while_alive.png",
+      "description": "Uma homenagem ao aprendizado contínuo da área de tecnologia.",
+      "featured": false,
+      "stock": 15,
+      "rating": {
+        "rate": 4.9,
+        "count": 200
+      }
     }
   ]
 }
