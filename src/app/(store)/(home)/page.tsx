@@ -4,6 +4,7 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ProductFilters } from './product-filters'
+import { ProductSort } from './product-sort'
 
 interface HomeProps {
   searchParams: Promise<{
@@ -13,6 +14,7 @@ interface HomeProps {
     rating_min?: string
     marca?: string
     disponibilidade?: string
+    sort?: string
   }>
 }
 
@@ -31,6 +33,7 @@ export default async function Home({ searchParams }: HomeProps) {
   if (resolvedSearchParams.marca) params.set('marca', resolvedSearchParams.marca)
   if (resolvedSearchParams.disponibilidade)
     params.set('disponibilidade', resolvedSearchParams.disponibilidade)
+  if (resolvedSearchParams.sort) params.set('sort', resolvedSearchParams.sort)
 
   const response = await api(`/products?${params.toString()}`, {
     next: {
@@ -50,7 +53,7 @@ export default async function Home({ searchParams }: HomeProps) {
   }
 
   const appliedFilters = Object.entries(resolvedSearchParams)
-    .filter(([, value]) => value)
+    .filter(([key, value]) => value && key !== 'sort') // sort não é um "filtro" exibido em badge
     .map(([key, value]) => ({
       key,
       label: filterLabels[key] ?? key,
@@ -61,20 +64,24 @@ export default async function Home({ searchParams }: HomeProps) {
     <div className="flex flex-col gap-8">
       <ProductFilters />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/15 px-3 py-1 text-sm font-semibold text-violet-300 ring-1 ring-inset ring-violet-500/30">
-          {products.length} produto{products.length === 1 ? '' : 's'}
-        </span>
-
-        {appliedFilters.map((filter) => (
-          <span
-            key={filter.key}
-            className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-zinc-300 ring-1 ring-inset ring-white/10"
-          >
-            <span className="text-zinc-500">{filter.label}:</span>
-            <span className="text-white">{filter.value}</span>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/15 px-3 py-1 text-sm font-semibold text-violet-300 ring-1 ring-inset ring-violet-500/30">
+            {products.length} produto{products.length === 1 ? '' : 's'}
           </span>
-        ))}
+
+          {appliedFilters.map((filter) => (
+            <span
+              key={filter.key}
+              className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-zinc-300 ring-1 ring-inset ring-white/10"
+            >
+              <span className="text-zinc-500">{filter.label}:</span>
+              <span className="text-white">{filter.value}</span>
+            </span>
+          ))}
+        </div>
+
+        <ProductSort />
       </div>
 
       {products.length > 0 ? (

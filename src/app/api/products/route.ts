@@ -1,6 +1,13 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import data from "./data.json";
+import { Product } from "@/data/types/product";
+
+const sortComparators: Record<string, (a: Product, b: Product) => number> = {
+  price_asc: (a, b) => a.price - b.price,
+  price_desc: (a, b) => b.price - a.price,
+  rating_desc: (a, b) => (b.rating?.rate ?? 0) - (a.rating?.rate ?? 0),
+};
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -12,6 +19,9 @@ export async function GET(request: NextRequest) {
     preco_min: z.coerce.number().optional(),
     preco_max: z.coerce.number().optional(),
     rating_min: z.coerce.number().optional(),
+    sort: z
+      .enum(["relevancia", "price_asc", "price_desc", "rating_desc"])
+      .optional(),
   });
 
   const {
@@ -21,6 +31,7 @@ export async function GET(request: NextRequest) {
     preco_max,
     preco_min,
     rating_min,
+    sort,
   } = filterSchema.parse(Object.fromEntries(searchParams));
 
   let filteredProducts = data.products;
@@ -55,8 +66,12 @@ export async function GET(request: NextRequest) {
 
   if (rating_min) {
     filteredProducts = filteredProducts.filter(
-      (p) => p.rating.rate >= rating_min,
+      (p) => p.rating && p.rating.rate >= rating_min,
     );
+  }
+
+  if (sort && sort in sortComparators) {
+    filteredProducts = [...filteredProducts].sort(sortComparators[sort]);
   }
 
   return Response.json(filteredProducts);
