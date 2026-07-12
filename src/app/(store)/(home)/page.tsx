@@ -6,35 +6,14 @@ import Link from 'next/link'
 import { ProductFilters } from './product-filters'
 
 interface HomeProps {
-  searchParams: {
+  searchParams: Promise<{
     categoria?: string
     preco_max?: string
     preco_min?: string
     rating_min?: string
-  }
-}
-
-async function getProducts({
-  categoria,
-  preco_max,
-  preco_min,
-  rating_min,
-}: HomeProps['searchParams']): Promise<Product[]> {
-  const params = new URLSearchParams()
-  if (categoria) params.set('categoria', categoria)
-  if (preco_max) params.set('preco_max', preco_max)
-  if (preco_min) params.set('preco_min', preco_min)
-  if (rating_min) params.set('rating_min', rating_min)
-
-  const response = await api(`/products?${params.toString()}`, {
-    next: {
-      revalidate: 60 * 60, // 1 hour
-    },
-  })
-
-  const products = await response.json()
-
-  return products
+    marca?: string
+    disponibilidade?: string
+  }>
 }
 
 export const metadata: Metadata = {
@@ -42,11 +21,61 @@ export const metadata: Metadata = {
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const products = await getProducts(searchParams)
+  const resolvedSearchParams = await searchParams
+
+  const params = new URLSearchParams()
+  if (resolvedSearchParams.categoria) params.set('categoria', resolvedSearchParams.categoria)
+  if (resolvedSearchParams.preco_max) params.set('preco_max', resolvedSearchParams.preco_max)
+  if (resolvedSearchParams.preco_min) params.set('preco_min', resolvedSearchParams.preco_min)
+  if (resolvedSearchParams.rating_min) params.set('rating_min', resolvedSearchParams.rating_min)
+  if (resolvedSearchParams.marca) params.set('marca', resolvedSearchParams.marca)
+  if (resolvedSearchParams.disponibilidade)
+    params.set('disponibilidade', resolvedSearchParams.disponibilidade)
+
+  const response = await api(`/products?${params.toString()}`, {
+    next: {
+      revalidate: 60 * 60, // 1 hour
+    },
+  })
+
+  const products: Product[] = await response.json()
+
+  const filterLabels: Record<string, string> = {
+    categoria: 'Categoria',
+    marca: 'Marca',
+    disponibilidade: 'Disponibilidade',
+    preco_min: 'Preço mín.',
+    preco_max: 'Preço máx.',
+    rating_min: 'Nota mín.',
+  }
+
+  const appliedFilters = Object.entries(resolvedSearchParams)
+    .filter(([, value]) => value)
+    .map(([key, value]) => ({
+      key,
+      label: filterLabels[key] ?? key,
+      value: value as string,
+    }))
 
   return (
     <div className="flex flex-col gap-8">
       <ProductFilters />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/15 px-3 py-1 text-sm font-semibold text-violet-300 ring-1 ring-inset ring-violet-500/30">
+          {products.length} produto{products.length === 1 ? '' : 's'}
+        </span>
+
+        {appliedFilters.map((filter) => (
+          <span
+            key={filter.key}
+            className="inline-flex items-center gap-1 rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-zinc-300 ring-1 ring-inset ring-white/10"
+          >
+            <span className="text-zinc-500">{filter.label}:</span>
+            <span className="text-white">{filter.value}</span>
+          </span>
+        ))}
+      </div>
 
       {products.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -9,6 +9,8 @@
       "description": "Moletom fabricado com 88% de algodão e 12% de poliéster.",
       "featured": true,
       "stock": 10,
+      "category": "roupas",
+      "brand": "Rocketseat",
       "rating": {
         "rate": 4.8,
         "count": 120
@@ -23,6 +25,8 @@
       "description": "Moletom fabricado com 88% de algodão e 12% de poliéster.",
       "featured": true,
       "stock": 5,
+      "category": "roupas",
+      "brand": "Rocketseat",
       "rating": {
         "rate": 4.5,
         "count": 98
@@ -37,6 +41,8 @@
       "description": "Camiseta fabricada com 100% de algodão.",
       "featured": true,
       "stock": 0,
+      "category": "roupas",
+      "brand": "Rocketseat",
       "rating": {
         "rate": 4.9,
         "count": 230
@@ -51,6 +57,8 @@
       "description": "Moletom fabricado com 88% de algodão e 12% de poliéster.",
       "featured": false,
       "stock": 15,
+      "category": "roupas",
+      "brand": "Lumen",
       "rating": {
         "rate": 4.2,
         "count": 50
@@ -65,6 +73,8 @@
       "description": "Moletom fabricado com 88% de algodão e 12% de poliéster.",
       "featured": false,
       "stock": 8,
+      "category": "roupas",
+      "brand": "Lumen",
       "rating": {
         "rate": 4.7,
         "count": 75
@@ -79,6 +89,8 @@
       "description": "Uma camiseta que representa a missão de todo desenvolvedor: transformar ideias em soluções. Minimalista, elegante e perfeita para o dia a dia.",
       "featured": false,
       "stock": 20,
+      "category": "roupas",
+      "brand": "Lumen",
       "rating": {
         "rate": 4.6,
         "count": 150
@@ -93,6 +105,8 @@
       "description": "Inspirada no momento mais importante de um projeto: registrar progresso. Para quem acredita que cada commit aproxima o produto da excelência.",
       "featured": false,
       "stock": 15,
+      "category": "roupas",
+      "brand": "Lumen",
       "rating": {
         "rate": 4.9,
         "count": 200
@@ -107,6 +121,8 @@
       "description": "Camiseta totalmente preta.",
       "featured": false,
       "stock": 15,
+      "category": "roupas",
+      "brand": "Lumen",
       "rating": {
         "rate": 4.9,
         "count": 200
@@ -121,9 +137,59 @@
       "description": "Uma homenagem ao aprendizado contínuo da área de tecnologia.",
       "featured": false,
       "stock": 15,
+      "category": "roupas",
+      "brand": "Lumen",
       "rating": {
         "rate": 4.9,
         "count": 200
+      }
+    },
+    {
+      "id": 10,
+      "title": "Boné Trucker",
+      "slug": "bone-trucker",
+      "price": 59.9,
+      "image": "/bone-trucker.png",
+      "description": "Boné estilo trucker com logo da Lumen.",
+      "featured": false,
+      "stock": 30,
+      "category": "acessorios",
+      "brand": "Lumen",
+      "rating": {
+        "rate": 4.4,
+        "count": 80
+      }
+    },
+    {
+      "id": 11,
+      "title": "Tênis CodeRunner",
+      "slug": "tenis-coderunner",
+      "price": 249.9,
+      "image": "/tenis-coderunner.png",
+      "description": "Tênis confortável para longas horas de codificação.",
+      "featured": false,
+      "stock": 12,
+      "category": "sapatos",
+      "brand": "DevFit",
+      "rating": {
+        "rate": 4.8,
+        "count": 150
+      }
+    },
+    {
+      "id": 12,
+      "title": "Teclado Mecânico DevPro",
+      "slug": "teclado-mecanico-devpro",
+      "price": 499.9,
+      "image": "/teclado-devpro.png",
+      "description": "Teclado mecânico com switches brown para a melhor experiência de digitação.",
+      "featured": false,
+      "stock": 7,
+      "category": "eletronicos",
+      "brand": "DevGear",
+      "rating": {
+        "rate": 4.9,
+        "count": 180
       }
     }
   ]
