@@ -10,8 +10,6 @@ interface ResolvedSearchParams {
   preco_max?: string
   preco_min?: string
   rating_min?: string
-  marca?: string
-  disponibilidade?: string
   sort?: string
   page?: string
 }
@@ -39,8 +37,6 @@ function buildProductsQuery(searchParams: ResolvedSearchParams, page: number) {
   if (searchParams.preco_max) params.set('preco_max', searchParams.preco_max)
   if (searchParams.preco_min) params.set('preco_min', searchParams.preco_min)
   if (searchParams.rating_min) params.set('rating_min', searchParams.rating_min)
-  if (searchParams.marca) params.set('marca', searchParams.marca)
-  if (searchParams.disponibilidade) params.set('disponibilidade', searchParams.disponibilidade)
   if (searchParams.sort) params.set('sort', searchParams.sort)
   params.set('page', String(page))
 
@@ -82,8 +78,6 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const filterLabels: Record<string, string> = {
     categoria: 'Categoria',
-    marca: 'Marca',
-    disponibilidade: 'Disponibilidade',
     preco_min: 'Preço mín.',
     preco_max: 'Preço máx.',
     rating_min: 'Nota mín.',

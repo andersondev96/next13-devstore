@@ -16,8 +16,6 @@ export async function GET(request: NextRequest) {
 
   const filterSchema = z.object({
     categoria: z.string().optional(),
-    marca: z.string().optional(),
-    disponibilidade: z.string().optional(),
     preco_min: z.coerce.number().optional(),
     preco_max: z.coerce.number().optional(),
     rating_min: z.coerce.number().optional(),
@@ -27,16 +25,8 @@ export async function GET(request: NextRequest) {
     page: z.coerce.number().int().min(1).optional().default(1),
   });
 
-  const {
-    categoria,
-    marca,
-    disponibilidade,
-    preco_max,
-    preco_min,
-    rating_min,
-    sort,
-    page,
-  } = filterSchema.parse(Object.fromEntries(searchParams));
+  const { categoria, preco_max, preco_min, rating_min, sort, page } =
+    filterSchema.parse(Object.fromEntries(searchParams));
 
   let filteredProducts = data.products;
 
@@ -44,20 +34,6 @@ export async function GET(request: NextRequest) {
     filteredProducts = filteredProducts.filter(
       (p) => p.category.toLocaleLowerCase() === categoria.toLocaleLowerCase(),
     );
-  }
-
-  if (marca) {
-    filteredProducts = filteredProducts.filter(
-      (p) => p.brand.toLocaleLowerCase() === marca.toLocaleLowerCase(),
-    );
-  }
-
-  if (disponibilidade) {
-    if (disponibilidade === "disponivel") {
-      filteredProducts = filteredProducts.filter((p) => p.stock > 0);
-    } else if (disponibilidade === "esgotado") {
-      filteredProducts = filteredProducts.filter((p) => p.stock <= 0);
-    }
   }
 
   if (preco_min) {
@@ -70,7 +46,7 @@ export async function GET(request: NextRequest) {
 
   if (rating_min) {
     filteredProducts = filteredProducts.filter(
-      (p) => p.rating && p.rating.rate >= rating_min,
+      (p) => p.rating.rate >= rating_min,
     );
   }
 
