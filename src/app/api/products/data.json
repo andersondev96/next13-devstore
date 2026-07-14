@@ -10,7 +10,6 @@
       "featured": false,
       "stock": 20,
       "category": "roupas",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.6,
         "count": 150
@@ -26,7 +25,6 @@
       "featured": false,
       "stock": 15,
       "category": "roupas",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.9,
         "count": 200
@@ -42,7 +40,6 @@
       "featured": false,
       "stock": 15,
       "category": "roupas",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.9,
         "count": 200
@@ -58,7 +55,6 @@
       "featured": false,
       "stock": 15,
       "category": "roupas",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.9,
         "count": 200
@@ -74,7 +70,6 @@
       "featured": false,
       "stock": 30,
       "category": "acessorios",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.4,
         "count": 80
@@ -90,7 +85,6 @@
       "featured": false,
       "stock": 12,
       "category": "sapatos",
-      "brand": "DevFit",
       "rating": {
         "rate": 4.8,
         "count": 150
@@ -101,12 +95,11 @@
       "title": "Teclado Mecânico DevPro",
       "slug": "teclado-mecanico-devpro",
       "price": 499.9,
-      "image": "/teclado-devpro.png",
+      "image": "/teclado_devpro.png",
       "description": "Teclado mecânico com switches brown para a melhor experiência de digitação.",
       "featured": false,
       "stock": 7,
       "category": "eletronicos",
-      "brand": "DevGear",
       "rating": {
         "rate": 4.9,
         "count": 180
@@ -122,7 +115,6 @@
       "featured": false,
       "stock": 10,
       "category": "roupas",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.5,
         "count": 90
@@ -133,12 +125,11 @@
       "title": "Headset Gamer Pro",
       "slug": "headset-gamer-pro",
       "price": 699.90,
-      "image": "/headset_gamer_pro.png",
+      "image": "/headset_gamer.png",
       "description": "Headset para jogadores profissionais.",
       "featured": false,
       "stock": 25,
       "category": "eletronicos",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.7,
         "count": 120
@@ -146,15 +137,14 @@
     },
     {
       "id": 10,
-      "title": "Caneca Illuminate",
-      "slug": "caneca-illuminate",
+      "title": "Caneca Lumen Illuminate",
+      "slug": "caneca-lumen-illuminate",
       "price": 108.90,
-      "image": "/caneca_illuminate.png",
+      "image": "/caneca_lumen.png",
       "description": "Caneca com design moderno e funcional.",
       "featured": false,
       "stock": 25,
       "category": "utilidades",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.7,
         "count": 120
@@ -170,7 +160,6 @@
       "featured": false,
       "stock": 20,
       "category": "roupas",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.8,
         "count": 140
@@ -186,7 +175,6 @@
       "featured": false,
       "stock": 20,
       "category": "utilidades",
-      "brand": "Lumen",
       "rating": {
         "rate": 4.6,
         "count": 130
