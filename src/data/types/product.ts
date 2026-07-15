@@ -11,4 +11,6 @@ export interface Product {
     count: number;
   };
   stock: number;
+  sizes?: string[];
+  category: string;
 }

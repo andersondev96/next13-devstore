@@ -46,15 +46,15 @@ export default async function ProductPage({ params }: ProductProps) {
   const product = await getProduct(slug)
 
   return (
-    <main className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <Card className="overflow-hidden border-white/10 p-3 sm:p-4">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[28px]">
+    <main className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <Card className="overflow-hidden rounded-[28px] border-white/10 lg:col-span-2">
+        <div className="relative h-full">
           <Image
             src={product.image}
             alt={product.title}
             fill
             quality={100}
-            className="object-cover"
+            className="object-contain"
           />
         </div>
       </Card>
@@ -78,8 +78,6 @@ export default async function ProductPage({ params }: ProductProps) {
                     {product.price.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
                     })}
                   </span>
                   <span className="text-sm text-slate-400">
@@ -93,23 +91,25 @@ export default async function ProductPage({ params }: ProductProps) {
               )}
             </div>
 
-            <div className="mt-8 space-y-4">
-              <span className="block text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
-                Tamanhos
-              </span>
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="mt-8 space-y-4">
+                <span className="block text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
+                  {product.category === 'sapatos' ? 'Numeração' : 'Tamanhos'}
+                </span>
 
-              <div className="flex flex-wrap gap-2">
-                {['P', 'M', 'G', 'GG'].map((size) => (
-                  <button
-                    key={size}
-                    type="button"
-                    className="flex h-11 w-14 items-center justify-center rounded-full border border-white/10 bg-slate-950/70 text-sm font-semibold text-slate-100 transition hover:border-brand-400/60 hover:text-brand-300"
-                  >
-                    {size}
-                  </button>
-                ))}
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      className="flex h-11 w-14 items-center justify-center rounded-full border border-white/10 bg-slate-950/70 text-sm font-semibold text-slate-100 transition hover:border-brand-400/60 hover:text-brand-300"
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {product.stock > 0 ? (

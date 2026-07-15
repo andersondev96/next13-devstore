@@ -7,8 +7,14 @@
       "price": 99.90,
       "image": "/camiseta_lumen_build_the_future.png",
       "description": "Uma camiseta que representa a missão de todo desenvolvedor: transformar ideias em soluções. Minimalista, elegante e perfeita para o dia a dia.",
-      "featured": false,
+      "featured": true,
       "stock": 20,
+      "sizes": [
+        "P",
+        "M",
+        "G",
+        "GG"
+      ],
       "category": "roupas",
       "rating": {
         "rate": 4.6,
@@ -24,6 +30,12 @@
       "description": "Inspirada no momento mais importante de um projeto: registrar progresso. Para quem acredita que cada commit aproxima o produto da excelência.",
       "featured": false,
       "stock": 15,
+      "sizes": [
+        "P",
+        "M",
+        "G",
+        "GG"
+      ],
       "category": "roupas",
       "rating": {
         "rate": 4.9,
@@ -39,6 +51,12 @@
       "description": "Camiseta totalmente preta.",
       "featured": false,
       "stock": 15,
+      "sizes": [
+        "P",
+        "M",
+        "G",
+        "GG"
+      ],
       "category": "roupas",
       "rating": {
         "rate": 4.9,
@@ -54,6 +72,12 @@
       "description": "Uma homenagem ao aprendizado contínuo da área de tecnologia.",
       "featured": false,
       "stock": 15,
+      "sizes": [
+        "P",
+        "M",
+        "G",
+        "GG"
+      ],
       "category": "roupas",
       "rating": {
         "rate": 4.9,
@@ -82,8 +106,21 @@
       "price": 249.9,
       "image": "/tenis-coderunner.png",
       "description": "Tênis confortável para longas horas de codificação.",
-      "featured": false,
+      "featured": true,
       "stock": 12,
+      "sizes": [
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44"
+      ],
       "category": "sapatos",
       "rating": {
         "rate": 4.8,
@@ -114,6 +151,12 @@
       "description": "Para quem conhece as longas noites de deploy e resolução de bugs.",
       "featured": false,
       "stock": 10,
+      "sizes": [
+        "P",
+        "M",
+        "G",
+        "GG"
+      ],
       "category": "roupas",
       "rating": {
         "rate": 4.5,
@@ -159,6 +202,12 @@
       "description": "Uma peça que representa o ciclo completo da criação de software.",
       "featured": false,
       "stock": 20,
+      "sizes": [
+        "P",
+        "M",
+        "G",
+        "GG"
+      ],
       "category": "roupas",
       "rating": {
         "rate": 4.8,
