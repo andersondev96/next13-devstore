@@ -36,8 +36,20 @@ export async function generateMetadata({
   const { slug } = await params
   const product = await getProduct(slug)
 
+  // NOTA: Para produção, você deve usar uma URL absoluta para a imagem.
+  // Isso pode ser alcançado usando uma variável de ambiente ou `metadataBase`.
+  const imageUrl = product.image
+
   return {
     title: product.title,
+    description: product.description,
+    openGraph: {
+      title: product.title,
+      description: product.description,
+      images: [{ url: imageUrl, width: 800, height: 800, alt: product.title }],
+      locale: 'pt_BR',
+      type: 'website',
+    },
   }
 }
 
@@ -46,8 +58,8 @@ export default async function ProductPage({ params }: ProductProps) {
   const product = await getProduct(slug)
 
   return (
-    <main className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <Card className="overflow-hidden rounded-[28px] border-white/10 lg:col-span-2">
+    <main className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+      <Card className="h-80 overflow-hidden rounded-[28px] border-white/10 sm:h-96 lg:col-span-3 lg:h-auto">
         <div className="relative h-full">
           <Image
             src={product.image}
@@ -59,7 +71,9 @@ export default async function ProductPage({ params }: ProductProps) {
         </div>
       </Card>
 
-      <ProductDetailsClient product={product} />
+      <div className="lg:col-span-2">
+        <ProductDetailsClient product={product} />
+      </div>
     </main>
   )
 }

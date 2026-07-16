@@ -31,9 +31,29 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                     <h1 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
                         {product.title}
                     </h1>
+                    {product.rating && (
+                        <div className="mt-2 flex items-center gap-2">
+                            <span className="font-bold text-violet-400">
+                                {product.rating.rate.toFixed(1)}/5
+                            </span>
+                            <span className="text-xs text-slate-400">
+                                ({product.rating.count} avaliações)
+                            </span>
+                        </div>
+                    )}
 
                     <p className="mt-4 leading-7 text-slate-300">{product.description}</p>
 
+                    <div className="mt-6 space-y-2 text-sm text-slate-300">
+                        <p>
+                            <span className="font-semibold text-slate-100">Categoria:</span>{' '}
+                            <span className="capitalize">{product.category}</span>
+                        </p>
+                        <p>
+                            <span className="font-semibold text-slate-100">Estoque:</span>{' '}
+                            {product.stock}
+                        </p>
+                    </div>
                     <div className="mt-8 flex flex-wrap items-center gap-3">
                         {typeof product.price === 'number' && (
                             <>
