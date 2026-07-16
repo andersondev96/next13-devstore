@@ -229,5 +229,42 @@
         "count": 130
       }
     }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "productId": 1,
+      "userId": "clerk-user-id-2",
+      "author": "Maria Clara",
+      "rating": 5,
+      "comment": "Camiseta de ótima qualidade, super confortável e a estampa é linda. Chegou antes do prazo!",
+      "createdAt": "2026-07-10T14:30:00Z"
+    },
+    {
+      "id": 2,
+      "productId": 6,
+      "userId": "clerk-user-id-1",
+      "author": "Anderson",
+      "rating": 4,
+      "comment": "O tênis é muito bonito e confortável para o dia a dia, mas achei a forma um pouco pequena. Recomendo pegar um número maior.",
+      "createdAt": "2026-07-12T18:00:00Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": 1,
+      "userId": "clerk-user-id-1",
+      "status": "completed",
+      "items": [
+        {
+          "productId": 1,
+          "quantity": 1
+        },
+        {
+          "productId": 6,
+          "quantity": 1
+        }
+      ]
+    }
   ]
 }

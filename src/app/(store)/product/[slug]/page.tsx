@@ -4,6 +4,7 @@ import { Product } from '@/data/types/products'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import { ProductReviews } from './product-reviews.client'
 import { ProductDetailsClient } from './product-details.client'
 
 export const dynamic = 'force-dynamic'
@@ -58,22 +59,26 @@ export default async function ProductPage({ params }: ProductProps) {
   const product = await getProduct(slug)
 
   return (
-    <main className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-      <Card className="h-80 overflow-hidden rounded-[28px] border-white/10 sm:h-96 lg:col-span-3 lg:h-auto">
-        <div className="relative h-full">
-          <Image
-            src={product.image}
-            alt={product.title}
-            fill
-            quality={100}
-            className="object-contain"
-          />
-        </div>
-      </Card>
+    <main className="flex flex-col gap-12">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+        <Card className="h-80 overflow-hidden rounded-[28px] border-white/10 sm:h-96 lg:col-span-3 lg:h-auto">
+          <div className="relative h-full">
+            <Image
+              src={product.image}
+              alt={product.title}
+              fill
+              quality={100}
+              className="object-contain"
+            />
+          </div>
+        </Card>
 
-      <div className="lg:col-span-2">
-        <ProductDetailsClient product={product} />
+        <div className="lg:col-span-2">
+          <ProductDetailsClient product={product} />
+        </div>
       </div>
+
+      <ProductReviews productSlug={product.slug} />
     </main>
   )
 }

@@ -1,68 +1,94 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import data from "./data.json";
-import { Product } from "@/data/types/product";
 
-const PAGE_SIZE = 6;
-
-const sortComparators: Record<string, (a: Product, b: Product) => number> = {
-  price_asc: (a, b) => a.price - b.price,
-  price_desc: (a, b) => b.price - a.price,
-  rating_desc: (a, b) => (b.rating?.rate ?? 0) - (a.rating?.rate ?? 0),
-};
+const searchParamsSchema = z.object({
+  q: z.string().optional(),
+  categoria: z.string().optional(),
+  preco_min: z.coerce.number().optional(),
+  preco_max: z.coerce.number().optional(),
+  rating_min: z.coerce.number().optional(),
+  sort: z.string().optional(),
+  page: z.coerce.number().min(1).optional().default(1),
+});
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = request.nextUrl;
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const { q, categoria, preco_min, preco_max, rating_min, sort, page } =
+      searchParamsSchema.parse(Object.fromEntries(searchParams));
 
-  const filterSchema = z.object({
-    categoria: z.string().optional(),
-    preco_min: z.coerce.number().optional(),
-    preco_max: z.coerce.number().optional(),
-    rating_min: z.coerce.number().optional(),
-    sort: z
-      .enum(["relevancia", "price_asc", "price_desc", "rating_desc"])
-      .optional(),
-    page: z.coerce.number().int().min(1).optional().default(1),
-  });
+    let products = data.products;
 
-  const { categoria, preco_max, preco_min, rating_min, sort, page } =
-    filterSchema.parse(Object.fromEntries(searchParams));
+    // Filtering
+    if (q) {
+      products = products.filter((product) =>
+        product.title.toLocaleLowerCase().includes(q.toLocaleLowerCase()),
+      );
+    }
 
-  let filteredProducts = data.products;
+    if (categoria) {
+      products = products.filter(
+        (product) =>
+          product.category.toLocaleLowerCase() ===
+          categoria.toLocaleLowerCase(),
+      );
+    }
 
-  if (categoria) {
-    filteredProducts = filteredProducts.filter(
-      (p) => p.category.toLocaleLowerCase() === categoria.toLocaleLowerCase(),
+    if (preco_min) {
+      products = products.filter((product) => product.price >= preco_min);
+    }
+
+    if (preco_max) {
+      products = products.filter((product) => product.price <= preco_max);
+    }
+
+    if (rating_min) {
+      products = products.filter(
+        (product) => product.rating && product.rating.rate >= rating_min,
+      );
+    }
+
+    // Sorting
+    if (sort) {
+      switch (sort) {
+        case "price_asc":
+          products.sort((a, b) => a.price - b.price);
+          break;
+        case "price_desc":
+          products.sort((a, b) => b.price - a.price);
+          break;
+        case "rating_desc":
+          products.sort(
+            (a, b) => (b.rating?.rate ?? 0) - (a.rating?.rate ?? 0),
+          );
+          break;
+      }
+    }
+
+    // Pagination
+    const PAGE_SIZE = 9;
+    const total = products.length;
+    const totalPages = Math.ceil(total / PAGE_SIZE);
+    const paginatedProducts = products.slice(
+      (page - 1) * PAGE_SIZE,
+      page * PAGE_SIZE,
+    );
+
+    return NextResponse.json({
+      products: paginatedProducts,
+      page,
+      totalPages,
+      total,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(error.flatten(), { status: 400 });
+    }
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
     );
   }
-
-  if (preco_min) {
-    filteredProducts = filteredProducts.filter((p) => p.price >= preco_min);
-  }
-
-  if (preco_max) {
-    filteredProducts = filteredProducts.filter((p) => p.price <= preco_max);
-  }
-
-  if (rating_min) {
-    filteredProducts = filteredProducts.filter(
-      (p) => p.rating.rate >= rating_min,
-    );
-  }
-
-  if (sort && sort in sortComparators) {
-    filteredProducts = [...filteredProducts].sort(sortComparators[sort]);
-  }
-
-  const total = filteredProducts.length;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const start = (page - 1) * PAGE_SIZE;
-  const paginatedProducts = filteredProducts.slice(start, start + PAGE_SIZE);
-
-  return Response.json({
-    products: paginatedProducts,
-    page,
-    totalPages,
-    total,
-  });
 }

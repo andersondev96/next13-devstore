@@ -41,7 +41,7 @@ export const authOptions: AuthOptions = {
     signIn: "/account",
   },
   secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true,
+  // trustHost: true,
   session: {
     strategy: "jwt",
   },
