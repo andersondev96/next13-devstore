@@ -1,6 +1,7 @@
 'use client'
 
 import { AddToCartButton } from '@/components/add-to-cart-button'
+import { useCart } from '@/context/cart-context'
 import { Card } from '@/shared/ui/components/card'
 import { Product } from '@/data/types/products'
 import { useState } from 'react'
@@ -10,6 +11,10 @@ interface ProductDetailsClientProps {
 }
 
 export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
+    const { items } = useCart()
+    const quantityInCart = items.find((item) => item.productId === product.id)?.quantity ?? 0
+    const displayStock = Math.max(product.stock - quantityInCart, 0)
+
     const [selectedSize, setSelectedSize] = useState<string | null>(
         product.sizes?.[0] ?? null,
     )
@@ -51,7 +56,7 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                         </p>
                         <p>
                             <span className="font-semibold text-slate-100">Estoque:</span>{' '}
-                            {product.stock}
+                            {displayStock}
                         </p>
                     </div>
                     <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -100,10 +105,12 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                 </div>
 
                 <div className="mt-auto">
-                    {product.stock > 0 ? (
+                    {displayStock > 0 ? (
                         canAddToCart ? (
                             <AddToCartButton
                                 productId={product.id}
+                                productTitle={product.title}
+                                stock={product.stock}
                                 className="mt-8 flex h-12 w-full items-center justify-center rounded-full bg-brand-500 font-semibold text-white transition-all hover:bg-brand-400 hover:brightness-110"
                             />
                         ) : (

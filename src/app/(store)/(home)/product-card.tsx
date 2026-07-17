@@ -1,21 +1,32 @@
-import Link from "next/link";
-import Image from "next/image";
-import { Product } from "@/data/types/products";
+'use client'
+
+import { useCart } from '@/context/cart-context'
+import { Product } from '@/data/types/products'
+import { twMerge } from 'tailwind-merge'
+import Image from 'next/image'
+import Link from 'next/link'
 
 interface ProductCardProps {
-    product: Product;
+    product: Product
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+    const { items } = useCart()
+    const quantityInCart = items.find((item) => item.productId === product.id)?.quantity ?? 0
+    const displayStock = Math.max(product.stock - quantityInCart, 0)
+
     return (
         <Link
             key={product.id}
             href={`/product/${product.slug}`}
-            className="group relative block overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/70 text-white shadow-card"
+            className={twMerge(
+                'group relative block overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/70 text-white shadow-card',
+                displayStock <= 0 && 'grayscale',
+            )}
         >
-            {product.stock <= 0 && (
+            {displayStock <= 0 && (
                 <div className="absolute right-4 top-4 z-10 rounded-full bg-red-500/80 px-3 py-1 text-xs font-bold backdrop-blur-sm">
-                    ESGOTADO
+                    INDISPONÍVEL
                 </div>
             )}
             <Image

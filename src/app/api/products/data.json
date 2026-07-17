@@ -50,7 +50,7 @@
       "image": "/camiseta_lumen_night_mode.png",
       "description": "Camiseta totalmente preta.",
       "featured": false,
-      "stock": 15,
+      "stock": 0,
       "sizes": [
         "P",
         "M",
@@ -107,7 +107,7 @@
       "image": "/tenis-coderunner.png",
       "description": "Tênis confortável para longas horas de codificação.",
       "featured": true,
-      "stock": 12,
+      "stock": 1,
       "sizes": [
         "34",
         "35",

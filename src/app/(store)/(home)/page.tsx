@@ -76,6 +76,9 @@ export default async function Home({ searchParams }: HomeProps) {
     ...remainingResponses.flatMap((response) => response.products),
   ]
 
+  // Coloca os produtos indisponíveis no final da lista
+  products.sort((a, b) => (b.stock > 0 ? 1 : 0) - (a.stock > 0 ? 1 : 0))
+
   const filterLabels: Record<string, string> = {
     categoria: 'Categoria',
     preco_min: 'Preço mín.',

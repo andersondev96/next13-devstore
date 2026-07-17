@@ -1,8 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Product } from '@/data/types/product'
+import { useCart } from '@/context/cart-context'
 import { ProductCard } from './product-card'
 
 interface ProductsResponse {
@@ -21,6 +22,7 @@ interface ProductListProps {
 export function ProductList({ initialProducts, initialPage, totalPages }: ProductListProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const { getQuantityInCart } = useCart()
 
     const [products, setProducts] = useState(initialProducts)
     const [page, setPage] = useState(initialPage)
@@ -28,6 +30,24 @@ export function ProductList({ initialProducts, initialPage, totalPages }: Produc
     const sentinelRef = useRef<HTMLDivElement>(null)
 
     const hasMore = page < totalPages
+
+    // Reordena levando em conta o estoque já reservado no carrinho do
+    // usuário (persistido no localStorage), e não só o estoque bruto que
+    // veio do servidor. Assim, um produto que zerou porque o próprio
+    // usuário colocou tudo no carrinho também desce para o fim da lista
+    // assim que a Home é (re)carregada — o sort é estável, então a ordem
+    // relativa dentro de cada grupo (disponível/indisponível) é preservada.
+    const sortedProducts = useMemo(() => {
+        function getAvailableStock(product: Product) {
+            return product.stock - getQuantityInCart(product.id)
+        }
+
+        return [...products].sort(
+            (a, b) =>
+                (getAvailableStock(b) > 0 ? 1 : 0) -
+                (getAvailableStock(a) > 0 ? 1 : 0),
+        )
+    }, [products, getQuantityInCart])
 
     const loadMore = useCallback(async () => {
         if (isLoading || !hasMore) return
@@ -41,6 +61,8 @@ export function ProductList({ initialProducts, initialPage, totalPages }: Produc
         const response = await fetch(`/api/products?${params.toString()}`)
         const data: ProductsResponse = await response.json()
 
+        // A ordenação final é toda responsabilidade do useMemo acima, então
+        // aqui só concatenamos os produtos recém-carregados.
         setProducts((current) => [...current, ...data.products])
         setPage(nextPage)
         setIsLoading(false)
@@ -65,7 +87,7 @@ export function ProductList({ initialProducts, initialPage, totalPages }: Produc
         return () => observer.disconnect()
     }, [hasMore, loadMore])
 
-    if (products.length === 0) {
+    if (sortedProducts.length === 0) {
         return (
             <div className="flex h-96 items-center justify-center">
                 <p className="text-center text-zinc-400">
@@ -78,7 +100,7 @@ export function ProductList({ initialProducts, initialPage, totalPages }: Produc
     return (
         <div className="flex flex-col gap-8">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {products.map((product) => (
+                {sortedProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}
             </div>

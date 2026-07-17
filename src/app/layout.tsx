@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Providers } from './providers'
 import './globals.css'
+import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
   title: {
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="pt">
       <body className="bg-slate-950 text-slate-50 antialiased">
         <Providers>{children}</Providers>
+        <Toaster richColors />
       </body>
     </html>
   )
