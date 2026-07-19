@@ -9,19 +9,26 @@ export interface CartItem {
   title: string
   quantity: number
   stock: number
+  price: number
+  image: string
 }
 
 interface AddOrUpdateItemInput {
   productId: number
   title: string
   stock: number
+  price: number
+  image: string
 }
 
 interface CartContextType {
   items: CartItem[]
   totalItems: number
+  cartTotal: number
   getQuantityInCart: (productId: number) => number
   addOrUpdateItem: (item: AddOrUpdateItemInput) => void
+  removeItem: (productId: number) => void
+  changeItemQuantity: (productId: number, quantity: number) => void
 }
 
 const CartContext = createContext({} as CartContextType)
@@ -67,7 +74,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Chamado SOMENTE depois que a Server Action confirma que a operação é
   // válida (produto existe e há estoque disponível). Aqui só refletimos o
   // resultado no estado local do carrinho.
-  function addOrUpdateItem({ productId, title, stock }: AddOrUpdateItemInput) {
+  function addOrUpdateItem({
+    productId,
+    title,
+    stock,
+    price,
+    image,
+  }: AddOrUpdateItemInput) {
     setItems((state) => {
       const productInCart = state.some((item) => item.productId === productId)
 
@@ -79,21 +92,50 @@ export function CartProvider({ children }: { children: ReactNode }) {
             ...item,
             title,
             stock,
+            price,
+            image,
             // trava de segurança extra no client: nunca passa do estoque
             quantity: Math.min(item.quantity + 1, stock),
           }
         })
       }
 
-      return [...state, { productId, title, stock, quantity: 1 }]
+      return [...state, { productId, title, stock, quantity: 1, price, image }]
     })
   }
 
+  function removeItem(productId: number) {
+    setItems((state) => state.filter((item) => item.productId !== productId))
+  }
+
+  function changeItemQuantity(productId: number, quantity: number) {
+    setItems((state) =>
+      state.map((item) => {
+        if (item.productId === productId) {
+          const newQuantity = Math.max(1, Math.min(quantity, item.stock))
+          return { ...item, quantity: newQuantity }
+        }
+        return item
+      }),
+    )
+  }
+
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
+  const cartTotal = items.reduce((sum, item) => {
+    return sum + item.price * item.quantity
+  }, 0)
 
   return (
     <CartContext.Provider
-      value={{ items, totalItems, getQuantityInCart, addOrUpdateItem }}
+      value={{
+        items,
+        totalItems,
+        cartTotal,
+        getQuantityInCart,
+        addOrUpdateItem,
+        removeItem,
+        changeItemQuantity,
+      }}
     >
       {children}
     </CartContext.Provider>

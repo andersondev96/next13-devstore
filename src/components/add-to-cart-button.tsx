@@ -11,12 +11,16 @@ interface AddToCartButtonProps extends ComponentProps<'button'> {
   productId: number
   productTitle: string
   stock: number
+  price: number
+  image: string
 }
 
 export function AddToCartButton({
   productId,
   productTitle,
   stock,
+  price,
+  image,
   disabled,
   className,
   ...props
@@ -41,6 +45,8 @@ export function AddToCartButton({
         productId,
         title: result.product?.title ?? productTitle,
         stock: result.product?.stock ?? stock,
+        price,
+        image,
       })
 
       toast.success(result.message)
