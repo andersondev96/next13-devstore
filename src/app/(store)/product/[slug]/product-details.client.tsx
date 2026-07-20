@@ -110,9 +110,10 @@ export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
                             <AddToCartButton
                                 productId={product.id}
                                 productTitle={product.title}
+                                productPrice={product.price}
+                                productImage={product.image}
+                                productSize={selectedSize ?? undefined}
                                 stock={product.stock}
-                                price={product.price}
-                                image={product.image}
                                 className="mt-8 flex h-12 w-full items-center justify-center rounded-full bg-brand-500 font-semibold text-white transition-all hover:bg-brand-400 hover:brightness-110"
                             />
                         ) : (

@@ -10,17 +10,19 @@ import { toast } from 'sonner'
 interface AddToCartButtonProps extends ComponentProps<'button'> {
   productId: number
   productTitle: string
+  productPrice: number
+  productImage: string
+  productSize?: string
   stock: number
-  price: number
-  image: string
 }
 
 export function AddToCartButton({
   productId,
   productTitle,
+  productPrice,
+  productImage,
+  productSize,
   stock,
-  price,
-  image,
   disabled,
   className,
   ...props
@@ -28,6 +30,8 @@ export function AddToCartButton({
   const { getQuantityInCart, addOrUpdateItem } = useCart()
   const [isPending, startTransition] = useTransition()
 
+  // Soma across todas as variações do produto: o estoque é do produto,
+  // não do tamanho, então o limite considera tudo que já está no carrinho.
   const currentQuantityInCart = getQuantityInCart(productId)
   const isOutOfStock = currentQuantityInCart >= stock
   const isDisabled = disabled || isPending || isOutOfStock
@@ -41,15 +45,22 @@ export function AddToCartButton({
         return
       }
 
+      const title = result.product?.title ?? productTitle
+
       addOrUpdateItem({
         productId,
-        title: result.product?.title ?? productTitle,
+        title,
+        price: result.product?.price ?? productPrice,
+        image: result.product?.image ?? productImage,
         stock: result.product?.stock ?? stock,
-        price,
-        image,
+        size: productSize,
       })
 
-      toast.success(result.message)
+      toast.success(
+        productSize
+          ? `${title} (Tamanho: ${productSize}) adicionado ao carrinho.`
+          : `${title} adicionado ao carrinho.`,
+      )
     })
   }
 
