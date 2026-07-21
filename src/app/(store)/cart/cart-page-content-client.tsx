@@ -2,14 +2,15 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Minus, Plus, Trash2 } from 'lucide-react'
-import { useEffect, useState, useTransition } from 'react'
+import { Minus, Plus, Tag, Trash2, X } from 'lucide-react'
+import { FormEvent, useEffect, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { useCart } from '@/context/cart-context'
 import {
     changeCartItemQuantityAction,
     removeFromCartAction,
 } from '@/app/api/products/[slug]/actions'
+import { applyCouponAction } from '@/app/api/cart/actions'
 
 function formatBRL(value: number) {
     return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -27,10 +28,26 @@ interface ItemToRemove {
 }
 
 export function CartPageContent() {
-    const { items, totalPrice, updateQuantity, removeItem, isLoading } = useCart()
+    const {
+        items,
+        totalPrice,
+        coupon,
+        discount,
+        totalWithDiscount,
+        updateQuantity,
+        removeItem,
+        applyCoupon,
+        removeCoupon,
+        isLoading,
+    } = useCart()
+
     const [pendingKey, setPendingKey] = useState<string | null>(null)
     const [itemToRemove, setItemToRemove] = useState<ItemToRemove | null>(null)
     const [isPending, startTransition] = useTransition()
+
+    const [couponInput, setCouponInput] = useState('')
+    const [couponError, setCouponError] = useState<string | null>(null)
+    const [isCouponPending, startCouponTransition] = useTransition()
 
     // Alteração de quantidade sempre revalida o estoque atual no servidor.
     // Como o estoque é do produto (não do tamanho), somamos a quantidade
@@ -81,6 +98,37 @@ export function CartPageContent() {
             setPendingKey(null)
             toast.success('Item removido do carrinho.')
         })
+    }
+
+    function handleApplyCoupon(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+
+        const code = couponInput.trim()
+        if (!code) return
+
+        setCouponError(null)
+
+        startCouponTransition(async () => {
+            const result = await applyCouponAction(
+                code,
+                items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+            )
+
+            if (!result.success || !result.coupon) {
+                setCouponError(result.message)
+                return
+            }
+
+            applyCoupon(result.coupon)
+            setCouponInput('')
+            toast.success(result.message)
+        })
+    }
+
+    function handleRemoveCoupon() {
+        removeCoupon()
+        setCouponError(null)
+        toast.success('Cupom removido.')
     }
 
     useEffect(() => {
@@ -214,11 +262,74 @@ export function CartPageContent() {
                     <div className="sticky top-24 rounded-lg border border-white/10 bg-slate-800/50 p-6 shadow-lg">
                         <h2 className="text-lg font-semibold text-white">Resumo da compra</h2>
 
+                        <div className="mt-6">
+                            <span className="mb-2 flex items-center gap-1.5 text-sm font-medium text-slate-300">
+                                <Tag className="h-4 w-4" />
+                                Cupom de desconto
+                            </span>
+
+                            {coupon ? (
+                                <div className="flex items-center justify-between rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5">
+                                    <div>
+                                        <p className="text-sm font-semibold text-emerald-300">
+                                            {coupon.code}
+                                        </p>
+                                        <p className="text-xs text-emerald-400/80">
+                                            {coupon.type === 'percentage'
+                                                ? `${coupon.value}% de desconto`
+                                                : `${formatBRL(coupon.value)} de desconto`}
+                                        </p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveCoupon}
+                                        title="Remover cupom"
+                                        className="rounded-full p-1.5 text-emerald-300 transition-colors hover:bg-emerald-500/20 hover:text-emerald-200"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={couponInput}
+                                        onChange={(event) => {
+                                            setCouponInput(event.target.value)
+                                            if (couponError) setCouponError(null)
+                                        }}
+                                        placeholder="Ex: BEMVINDO10"
+                                        disabled={isCouponPending}
+                                        className="w-full min-w-0 rounded-full border border-white/10 bg-slate-950/70 px-4 py-2 text-sm uppercase text-white placeholder:normal-case placeholder:text-slate-500 focus:border-cyan-400/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={isCouponPending || !couponInput.trim()}
+                                        className="shrink-0 rounded-full bg-slate-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        {isCouponPending ? 'Aplicando...' : 'Aplicar'}
+                                    </button>
+                                </form>
+                            )}
+
+                            {couponError && (
+                                <p className="mt-2 text-xs text-red-400">{couponError}</p>
+                            )}
+                        </div>
+
                         <div className="mt-6 space-y-3 text-slate-300">
                             <div className="flex items-center justify-between">
                                 <span className="text-sm">Subtotal</span>
                                 <span>{formatBRL(totalPrice)}</span>
                             </div>
+
+                            {coupon && (
+                                <div className="flex items-center justify-between text-emerald-400">
+                                    <span className="text-sm">Desconto ({coupon.code})</span>
+                                    <span>-{formatBRL(discount)}</span>
+                                </div>
+                            )}
+
                             <div className="flex items-center justify-between">
                                 <span className="text-sm">Entrega</span>
                                 <span className="uppercase">Grátis</span>
@@ -228,7 +339,7 @@ export function CartPageContent() {
 
                             <div className="flex items-center justify-between text-base font-semibold text-white">
                                 <span>Total</span>
-                                <span>{formatBRL(totalPrice)}</span>
+                                <span>{formatBRL(totalWithDiscount)}</span>
                             </div>
                         </div>
 

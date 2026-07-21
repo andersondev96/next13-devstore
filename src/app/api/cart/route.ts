@@ -10,10 +10,20 @@ const cartItemSchema = z.object({
   image: z.string(),
   stock: z.number().int().min(0),
   quantity: z.number().int().min(1),
+  size: z.string().optional(),
 });
+
+const cartCouponSchema = z
+  .object({
+    code: z.string(),
+    type: z.enum(["percentage", "fixed"]),
+    value: z.number(),
+  })
+  .nullable();
 
 const cartPayloadSchema = z.object({
   items: z.array(cartItemSchema),
+  coupon: cartCouponSchema.optional().default(null),
 });
 
 export async function GET() {
@@ -23,8 +33,8 @@ export async function GET() {
     return Response.json({ message: "Não autenticado." }, { status: 401 });
   }
 
-  const items = getServerCart(session.user.id);
-  return Response.json({ items });
+  const cart = getServerCart(session.user.id);
+  return Response.json(cart);
 }
 
 export async function PUT(request: Request) {
@@ -48,7 +58,8 @@ export async function PUT(request: Request) {
     quantity: Math.min(item.quantity, item.stock),
   }));
 
-  saveServerCart(session.user.id, safeItems);
+  const cart = { items: safeItems, coupon: parsed.data.coupon };
+  saveServerCart(session.user.id, cart);
 
-  return Response.json({ items: safeItems });
+  return Response.json(cart);
 }

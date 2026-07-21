@@ -26,6 +26,15 @@ export interface CartItem {
   size?: string
 }
 
+export type CouponType = 'percentage' | 'fixed'
+
+export interface AppliedCoupon {
+  code: string
+  type: CouponType
+  /** Percentual (0-100) quando type = "percentage", valor em R$ quando type = "fixed". */
+  value: number
+}
+
 interface AddOrUpdateItemInput {
   productId: number
   title: string
@@ -35,15 +44,29 @@ interface AddOrUpdateItemInput {
   size?: string
 }
 
+interface GuestCartData {
+  items: CartItem[]
+  coupon: AppliedCoupon | null
+}
+
 interface CartContextType {
   items: CartItem[]
   totalItems: number
+  /** Soma dos itens, sem desconto. */
   totalPrice: number
+  /** Cupom atualmente aplicado, ou null. */
+  coupon: AppliedCoupon | null
+  /** Valor do desconto do cupom atual sobre o `totalPrice` (0 se não houver cupom). */
+  discount: number
+  /** `totalPrice - discount`, nunca negativo. */
+  totalWithDiscount: number
   isLoading: boolean
   getQuantityInCart: (productId: number, size?: string) => number
   addOrUpdateItem: (item: AddOrUpdateItemInput) => void
   updateQuantity: (productId: number, quantity: number, size?: string) => void
   removeItem: (productId: number, size?: string) => void
+  applyCoupon: (coupon: AppliedCoupon) => void
+  removeCoupon: () => void
 }
 
 const CartContext = createContext({} as CartContextType)
@@ -59,19 +82,36 @@ function lineKey(productId: number, size?: string) {
   return `${productId}::${size ?? ''}`
 }
 
-function readGuestCart(): CartItem[] {
+function calculateDiscount(totalPrice: number, coupon: AppliedCoupon | null) {
+  if (!coupon) return 0
+
+  const discount =
+    coupon.type === 'percentage' ? (totalPrice * coupon.value) / 100 : coupon.value
+
+  return Math.min(discount, totalPrice)
+}
+
+function readGuestCart(): GuestCartData {
   try {
     const stored = window.localStorage.getItem(GUEST_CART_STORAGE_KEY)
-    return stored ? JSON.parse(stored) : []
+    if (!stored) return { items: [], coupon: null }
+
+    const parsed = JSON.parse(stored)
+
+    // Compatibilidade com o formato antigo, em que a chave guardava
+    // diretamente um array de itens (sem cupom).
+    if (Array.isArray(parsed)) return { items: parsed, coupon: null }
+
+    return { items: parsed.items ?? [], coupon: parsed.coupon ?? null }
   } catch (error) {
     console.error('Não foi possível carregar o carrinho salvo.', error)
-    return []
+    return { items: [], coupon: null }
   }
 }
 
-function writeGuestCart(items: CartItem[]) {
+function writeGuestCart(data: GuestCartData) {
   try {
-    window.localStorage.setItem(GUEST_CART_STORAGE_KEY, JSON.stringify(items))
+    window.localStorage.setItem(GUEST_CART_STORAGE_KEY, JSON.stringify(data))
   } catch (error) {
     console.error('Não foi possível salvar o carrinho.', error)
   }
@@ -118,20 +158,24 @@ function mergeCarts(serverItems: CartItem[], guestItems: CartItem[]): CartItem[]
 export function CartProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession()
   const [items, setItems] = useState<CartItem[]>([])
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const previousUserId = useRef<string | null>(null)
 
-  const persistServerCart = useCallback(async (nextItems: CartItem[]) => {
-    try {
-      await fetch('/api/cart', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: nextItems }),
-      })
-    } catch (error) {
-      console.error('Não foi possível sincronizar o carrinho.', error)
-    }
-  }, [])
+  const persistServerCart = useCallback(
+    async (nextItems: CartItem[], nextCoupon: AppliedCoupon | null) => {
+      try {
+        await fetch('/api/cart', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: nextItems, coupon: nextCoupon }),
+        })
+      } catch (error) {
+        console.error('Não foi possível sincronizar o carrinho.', error)
+      }
+    },
+    [],
+  )
 
   // Reage a mudanças no estado de autenticação:
   // - visitante -> lê do localStorage ("cart:guest")
@@ -153,28 +197,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
         try {
           const response = await fetch('/api/cart')
-          const serverItems: CartItem[] = response.ok
-            ? ((await response.json()).items ?? [])
-            : []
+          const serverCart = response.ok
+            ? await response.json()
+            : { items: [], coupon: null }
+          const serverItems: CartItem[] = serverCart.items ?? []
+          const serverCoupon: AppliedCoupon | null = serverCart.coupon ?? null
 
           if (isNewLogin) {
-            const guestItems = readGuestCart()
-            const mergedItems = mergeCarts(serverItems, guestItems)
+            const guest = readGuestCart()
+            const mergedItems = mergeCarts(serverItems, guest.items)
+            // Prioriza o cupom que já estava salvo na conta; se não houver,
+            // aproveita o que o visitante tinha aplicado localmente.
+            const mergedCoupon = serverCoupon ?? guest.coupon
 
             setItems(mergedItems)
+            setCoupon(mergedCoupon)
             clearGuestCart()
 
-            if (guestItems.length > 0) {
-              await persistServerCart(mergedItems)
+            if (guest.items.length > 0 || guest.coupon) {
+              await persistServerCart(mergedItems, mergedCoupon)
             }
           } else {
             setItems(serverItems)
+            setCoupon(serverCoupon)
           }
         } catch (error) {
           console.error('Não foi possível carregar o carrinho salvo.', error)
         }
       } else {
-        setItems(readGuestCart())
+        const guest = readGuestCart()
+        setItems(guest.items)
+        setCoupon(guest.coupon)
       }
 
       previousUserId.current = userId
@@ -190,11 +243,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (isLoading) return
 
     if (session?.user?.id) {
-      persistServerCart(items)
+      persistServerCart(items, coupon)
     } else {
-      writeGuestCart(items)
+      writeGuestCart({ items, coupon })
     }
-  }, [items, isLoading, session?.user?.id, persistServerCart])
+  }, [items, coupon, isLoading, session?.user?.id, persistServerCart])
 
   // Sem `size`: soma a quantidade de TODAS as variações do produto (usado
   // para checar o estoque total, já que o estoque é do produto, não do
@@ -279,8 +332,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((state) => state.filter((item) => !isSameLine(item, productId, size)))
   }
 
+  // Apenas um cupom pode estar ativo por vez: aplicar um novo sempre
+  // substitui o anterior.
+  function applyCoupon(nextCoupon: AppliedCoupon) {
+    setCoupon(nextCoupon)
+  }
+
+  function removeCoupon() {
+    setCoupon(null)
+  }
+
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalPrice = items.reduce((sum, item) => sum + item.quantity * item.price, 0)
+  const discount = calculateDiscount(totalPrice, coupon)
+  const totalWithDiscount = Math.max(totalPrice - discount, 0)
 
   return (
     <CartContext.Provider
@@ -288,11 +353,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
         items,
         totalItems,
         totalPrice,
+        coupon,
+        discount,
+        totalWithDiscount,
         isLoading,
         getQuantityInCart,
         addOrUpdateItem,
         updateQuantity,
         removeItem,
+        applyCoupon,
+        removeCoupon,
       }}
     >
       {children}
