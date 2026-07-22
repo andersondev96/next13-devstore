@@ -17,13 +17,22 @@ const searchParamsSchema = z.object({
   rating_min: z.coerce.number().optional(),
   sort: z.string().optional(),
   page: z.coerce.number().min(1).optional().default(1),
+  limit: z.coerce.number().min(1).optional(),
 });
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const { q, categoria, preco_min, preco_max, rating_min, sort, page } =
-      searchParamsSchema.parse(Object.fromEntries(searchParams));
+    const {
+      q,
+      categoria,
+      preco_min,
+      preco_max,
+      rating_min,
+      sort,
+      page,
+      limit,
+    } = searchParamsSchema.parse(Object.fromEntries(searchParams));
 
     let products = data.products;
 
@@ -77,7 +86,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Pagination
-    const PAGE_SIZE = 9;
+    const PAGE_SIZE = limit ?? 9;
     const total = products.length;
     const totalPages = Math.ceil(total / PAGE_SIZE);
     const paginatedProducts = products.slice(
