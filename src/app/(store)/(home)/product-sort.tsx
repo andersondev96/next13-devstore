@@ -10,7 +10,11 @@ const sortOptions = [
     { value: 'rating_desc', label: 'Melhor avaliação' },
 ]
 
-export function ProductSort() {
+interface ProductSortProps {
+    basePath?: string
+}
+
+export function ProductSort({ basePath = '/' }: ProductSortProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -21,14 +25,9 @@ export function ProductSort() {
         if (sort && sort !== 'relevancia') params.set('sort', sort)
         else params.delete('sort')
 
-        if (sort && sort !== 'relevancia') params.set('sort', sort)
-        else params.delete('sort')
-
         params.delete('page') // toda nova ordenação reinicia a paginação
 
-        router.push(`/?${params.toString()}`)
-
-        router.push(`/?${params.toString()}`)
+        router.push(`${basePath}?${params.toString()}`)
     }
 
     return (

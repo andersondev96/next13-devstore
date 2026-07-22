@@ -17,9 +17,15 @@ interface ProductListProps {
     initialProducts: Product[]
     initialPage: number
     totalPages: number
+    basePath?: string
 }
 
-export function ProductList({ initialProducts, initialPage, totalPages }: ProductListProps) {
+export function ProductList({
+    initialProducts,
+    initialPage,
+    totalPages,
+    basePath = '/',
+}: ProductListProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const { getQuantityInCart } = useCart()
@@ -68,8 +74,8 @@ export function ProductList({ initialProducts, initialPage, totalPages }: Produc
         setIsLoading(false)
 
         // Mantém a URL compartilhável, sem recarregar a página nem rolar para o topo
-        router.replace(`/?${params.toString()}`, { scroll: false })
-    }, [hasMore, isLoading, page, router, searchParams])
+        router.replace(`${basePath}?${params.toString()}`, { scroll: false })
+    }, [hasMore, isLoading, page, router, searchParams, basePath])
 
     // Carrega automaticamente ao rolar até o fim da lista
     useEffect(() => {

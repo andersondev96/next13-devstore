@@ -32,7 +32,11 @@ function getSelectedPriceRange(searchParams: URLSearchParams): string {
     return match?.value ?? ''
 }
 
-export function ProductFilters() {
+interface ProductFiltersProps {
+    basePath?: string
+}
+
+export function ProductFilters({ basePath = '/' }: ProductFiltersProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -61,11 +65,18 @@ export function ProductFilters() {
 
         params.delete('page') // todo novo filtro reinicia a paginação
 
-        router.push(`/?${params.toString()}`)
+        router.push(`${basePath}?${params.toString()}`)
     }
 
     function handleClearFilters() {
-        router.push('/')
+        const params = new URLSearchParams()
+        const q = searchParams.get('q')
+
+        if (q) {
+            params.set('q', q)
+        }
+
+        router.push(`${basePath}?${params.toString()}`)
     }
 
     return (

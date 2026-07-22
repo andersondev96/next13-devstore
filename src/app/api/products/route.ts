@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import data from "./data.json";
 
+function normalizeString(str: string) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase();
+}
+
 const searchParamsSchema = z.object({
   q: z.string().optional(),
   categoria: z.string().optional(),
@@ -22,8 +29,11 @@ export async function GET(request: NextRequest) {
 
     // Filtering
     if (q) {
-      products = products.filter((product) =>
-        product.title.toLocaleLowerCase().includes(q.toLocaleLowerCase()),
+      const normalizedQuery = normalizeString(q);
+      products = products.filter(
+        (product) =>
+          normalizeString(product.title).includes(normalizedQuery) ||
+          normalizeString(product.description).includes(normalizedQuery),
       );
     }
 
