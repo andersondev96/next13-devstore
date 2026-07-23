@@ -66,7 +66,7 @@ async function fetchProductsPage(
   return response.json() as Promise<ProductsResponse>
 }
 
-export default async function Search({ searchParams }: SearchProps) {
+export default async function SearchPage({ searchParams }: SearchProps) {
   const resolvedSearchParams = await searchParams
   const { q: query } = resolvedSearchParams
 

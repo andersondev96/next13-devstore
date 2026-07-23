@@ -13,7 +13,12 @@ export function CartWidget() {
     >
       <ShoppingBag className="h-5 w-5 shrink-0 text-brand-300" />
       <span className="hidden sm:inline">Carrinho</span>
-      <span className="font-mono text-xs text-slate-400">({totalItems})</span>
+      <span
+        data-testid="cart-count"
+        className="font-mono text-xs text-slate-400"
+      >
+        ({totalItems})
+      </span>
     </Link>
   )
 }

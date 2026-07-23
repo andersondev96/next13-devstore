@@ -86,7 +86,9 @@ function calculateDiscount(totalPrice: number, coupon: AppliedCoupon | null) {
   if (!coupon) return 0
 
   const discount =
-    coupon.type === 'percentage' ? (totalPrice * coupon.value) / 100 : coupon.value
+    coupon.type === 'percentage'
+      ? (totalPrice * coupon.value) / 100
+      : coupon.value
 
   return Math.min(discount, totalPrice)
 }
@@ -128,7 +130,10 @@ function clearGuestCart() {
 // Mescla o carrinho salvo do usuário com o carrinho de convidado (se
 // houver), somando quantidades de produtos repetidos em vez de duplicar
 // o item, e sempre respeitando o estoque disponível.
-function mergeCarts(serverItems: CartItem[], guestItems: CartItem[]): CartItem[] {
+function mergeCarts(
+  serverItems: CartItem[],
+  guestItems: CartItem[],
+): CartItem[] {
   const merged = new Map<string, CartItem>()
 
   for (const item of serverItems) {
@@ -142,7 +147,10 @@ function mergeCarts(serverItems: CartItem[], guestItems: CartItem[]): CartItem[]
     if (existing) {
       merged.set(key, {
         ...existing,
-        quantity: Math.min(existing.quantity + guestItem.quantity, existing.stock),
+        quantity: Math.min(
+          existing.quantity + guestItem.quantity,
+          existing.stock,
+        ),
       })
     } else {
       merged.set(key, {
@@ -226,8 +234,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       } else {
         const guest = readGuestCart()
-        setItems(guest.items)
-        setCoupon(guest.coupon)
+        setItems((currentItems) => mergeCarts(currentItems, guest.items))
+        setCoupon((currentCoupon) => currentCoupon ?? guest.coupon)
       }
 
       previousUserId.current = userId
@@ -254,7 +262,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // tamanho). Com `size`: retorna a quantidade daquela linha específica.
   function getQuantityInCart(productId: number, size?: string) {
     if (size !== undefined) {
-      return items.find((item) => isSameLine(item, productId, size))?.quantity ?? 0
+      return (
+        items.find((item) => isSameLine(item, productId, size))?.quantity ?? 0
+      )
     }
 
     return items
@@ -265,7 +275,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Chamado depois que a Server Action confirma que a operação é válida.
   // Cada variação (tamanho) vira uma linha própria no carrinho, mas todas
   // dividem o mesmo estoque do produto.
-  function addOrUpdateItem({ productId, title, price, image, stock, size }: AddOrUpdateItemInput) {
+  function addOrUpdateItem({
+    productId,
+    title,
+    price,
+    image,
+    stock,
+    size,
+  }: AddOrUpdateItemInput) {
     setItems((state) => {
       const otherLinesQuantity = state.reduce(
         (sum, item) =>
@@ -276,19 +293,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
       )
       const maxForThisLine = Math.max(stock - otherLinesQuantity, 0)
 
-      const existingIndex = state.findIndex((item) => isSameLine(item, productId, size))
+      const existingIndex = state.findIndex((item) =>
+        isSameLine(item, productId, size),
+      )
 
       if (existingIndex >= 0) {
         return state.map((item, index) =>
           index === existingIndex
             ? {
-              ...item,
-              title,
-              price,
-              image,
-              stock,
-              quantity: Math.min(item.quantity + 1, maxForThisLine),
-            }
+                ...item,
+                title,
+                price,
+                image,
+                stock,
+                quantity: Math.min(item.quantity + 1, maxForThisLine),
+              }
             : item,
         )
       }
@@ -297,7 +316,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       return [
         ...state,
-        { productId, title, price, image, stock, size, quantity: Math.min(1, maxForThisLine) },
+        {
+          productId,
+          title,
+          price,
+          image,
+          stock,
+          size,
+          quantity: Math.min(1, maxForThisLine),
+        },
       ]
     })
   }
@@ -329,7 +356,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function removeItem(productId: number, size?: string) {
-    setItems((state) => state.filter((item) => !isSameLine(item, productId, size)))
+    setItems((state) =>
+      state.filter((item) => !isSameLine(item, productId, size)),
+    )
   }
 
   // Apenas um cupom pode estar ativo por vez: aplicar um novo sempre
@@ -343,7 +372,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const totalPrice = items.reduce((sum, item) => sum + item.quantity * item.price, 0)
+  const totalPrice = items.reduce(
+    (sum, item) => sum + item.quantity * item.price,
+    0,
+  )
   const discount = calculateDiscount(totalPrice, coupon)
   const totalWithDiscount = Math.max(totalPrice - discount, 0)
 
